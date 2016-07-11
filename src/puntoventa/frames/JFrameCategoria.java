@@ -88,7 +88,7 @@ public class JFrameCategoria extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Categoria", "Subcategoria"
+                "ID", "Categoria", "Categoria Padre"
             }
         ) {
             Class[] types = new Class [] {

@@ -5,7 +5,10 @@
  */
 package puntoventa.frames;
 
+import java.awt.event.WindowEvent;
+import javax.swing.DefaultComboBoxModel;
 import puntodeventa.PuntoVentaConfiguracion;
+import puntodeventa.PuntoVentaPrinter;
 
 /**
  *
@@ -35,8 +38,8 @@ public class JDialogConfiguracion extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         impresoraReportesJComboBox = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        aceptarJButton = new javax.swing.JButton();
+        cancelarJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -55,11 +58,21 @@ public class JDialogConfiguracion extends javax.swing.JDialog {
 
         impresoraReportesJComboBox.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
-        jButton1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jButton1.setText("Aceptar");
+        aceptarJButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        aceptarJButton.setText("Aceptar");
+        aceptarJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aceptarJButtonActionPerformed(evt);
+            }
+        });
 
-        jButton2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jButton2.setText("Cancelar");
+        cancelarJButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        cancelarJButton.setText("Cancelar");
+        cancelarJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarJButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -76,9 +89,9 @@ public class JDialogConfiguracion extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
+                                .addComponent(aceptarJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(cancelarJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(impresoraTicketJComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(impresoraReportesJComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())))
@@ -98,13 +111,29 @@ public class JDialogConfiguracion extends javax.swing.JDialog {
                     .addComponent(impresoraReportesJComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cancelarJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                    .addComponent(aceptarJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void aceptarJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarJButtonActionPerformed
+       
+        String impresoraReportes = (String)impresoraReportesJComboBox.getSelectedItem();
+        String impresoraTicket = (String)impresoraTicketJComboBox.getSelectedItem();
+        
+        configuracion.setImpresoraReportes(impresoraReportes);
+        configuracion.setImpresoraTickets(impresoraTicket);
+        
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    }//GEN-LAST:event_aceptarJButtonActionPerformed
+
+    private void cancelarJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarJButtonActionPerformed
+        
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    }//GEN-LAST:event_cancelarJButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -148,14 +177,42 @@ public class JDialogConfiguracion extends javax.swing.JDialog {
         });
     }
     
+    // Custom methods
+    
+    public void customInit() {
+        
+        
+        printer = new PuntoVentaPrinter();
+        cargarImpresorasDisponibles();
+        cargarImpresorasSeleccionadas();
+    }
+    
+    private void cargarImpresorasSeleccionadas() {
+        
+        impresoraReportesJComboBox.setSelectedItem(configuracion.getImpresoraReportes());
+        impresoraTicketJComboBox.setSelectedItem(configuracion.getImpresoraTickets());
+    }
+    
+    private void cargarImpresorasDisponibles(){
+        
+        impresoraReportesJComboBox.addItem("");
+        impresoraTicketJComboBox.addItem("");
+        for ( String service : printer.getServices() ) {
+            
+            impresoraReportesJComboBox.addItem(service);
+            impresoraTicketJComboBox.addItem(service);
+        }
+    }
+    
     // Custom variables
     private PuntoVentaConfiguracion configuracion;
+    private PuntoVentaPrinter printer;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton aceptarJButton;
+    private javax.swing.JButton cancelarJButton;
     private javax.swing.JComboBox<String> impresoraReportesJComboBox;
     private javax.swing.JComboBox<String> impresoraTicketJComboBox;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

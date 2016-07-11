@@ -11,11 +11,17 @@ import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
@@ -26,6 +32,8 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
+import puntodeventa.PuntoVentaConfiguracion;
+import puntodeventa.PuntoVentaPrinter;
 import puntodeventa.sql.PuntoventaCarrito;
 import puntodeventa.sql.PuntoventaProducto;
 import puntodeventa.sql.PuntoventaVenta;
@@ -305,7 +313,7 @@ public class JFrameVenta extends javax.swing.JFrame {
     private void concretarVentaJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_concretarVentaJButtonActionPerformed
 
         double totalCompra = 0.0;
-        Date fechaDeCompra = new Date();
+        Date fechaDeCompra = Calendar.getInstance(Locale.getDefault()).getTime();
         int numeroArticulos = carritoJTable.getRowCount();
 
         if (numeroArticulos > 0) {
@@ -316,36 +324,59 @@ public class JFrameVenta extends javax.swing.JFrame {
             }
 
             JDialogVentaResumen ventaResumen = new JDialogVentaResumen(this, true);
-            
-            
+
             ventaResumen.setLocationRelativeTo(this);
             ventaResumen.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-            
+
             ventaResumen.setTotalCompra(totalCompra);
             ventaResumen.setFechaCompra(fechaDeCompra);
-            
-            
+
             ventaResumen.setVisible(true);
-            
-            if ( !ventaResumen.isCompraCancelada() ) {
-                
+
+            if (!ventaResumen.isCompraCancelada()) {
+
                 PuntoventaVenta ventaCarrito = nuevaVenta(fechaDeCompra, totalCompra, ventaResumen.getPagoCompra(), ventaResumen.getCambioCompra());
-                
-                for ( int row = 0; row < numeroArticulos; row ++ ) {
-                    
-                    venderArticulo(ventaCarrito, listaArticulos.get(row), (Integer)carritoJTable.getValueAt(row, 3));
+                String items = "";
+
+                for (int row = 0; row < numeroArticulos; row++) {
+
+                    items += venderArticulo(ventaCarrito, listaArticulos.get(row), (Integer) carritoJTable.getValueAt(row, 3));
                 }
                 
+                if ( ventaResumen.isImprimeTicket() ) {
+                    imprimirTicket(items, ventaCarrito);
+                }
                 limpiarCarrito();
                 JOptionPane.showMessageDialog(this, "Venta realizada correctamente.");
             }
-        }
-        
-        else {
-            
+        } else {
+
             JOptionPane.showMessageDialog(this, "No se han ingresado artículos al carrito.");
         }
     }//GEN-LAST:event_concretarVentaJButtonActionPerformed
+
+    private void imprimirTicket(String items, PuntoventaVenta venta) {
+
+        PuntoVentaConfiguracion configuracion = new PuntoVentaConfiguracion();
+        PuntoVentaPrinter impresion = new PuntoVentaPrinter();
+        configuracion.cargarConfiguracion();
+        String impresora = configuracion.getImpresoraTickets();
+        impresion.setSelectedService(impresora);
+        
+        String total = String.format("$%.2f", venta.getTotalVenta());
+        String pago = String.format("$%.2f", venta.getPagoVenta());
+        String cambio = String.format("$%.2f", venta.getCambioVenta());
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        String dateTime = formato.format(venta.getFechaVenta());
+        
+        impresion.setValuesTicket(dateTime, items, total, pago, cambio);
+        
+        try {
+            impresion.printTicket();
+        } catch (Exception ex) {
+            Logger.getLogger(JFrameVenta.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -383,7 +414,6 @@ public class JFrameVenta extends javax.swing.JFrame {
     }
 
     // Custom methods
-    
     private void deleteRows() {
 
         DefaultTableModel dm = (DefaultTableModel) carritoJTable.getModel();
@@ -393,45 +423,51 @@ public class JFrameVenta extends javax.swing.JFrame {
             dm.removeRow(i);
         }
     }
-    
-    private PuntoventaVenta nuevaVenta( Date fechaVenta, double totalVenta, double pagoVenta, double cambioVenta ) {
-        
+
+    private PuntoventaVenta nuevaVenta(Date fechaVenta, double totalVenta, double pagoVenta, double cambioVenta) {
+
         em.getTransaction().begin();
-        
+
         PuntoventaVenta venta = new PuntoventaVenta();
         venta.setFechaVenta(fechaVenta);
         venta.setTotalVenta(totalVenta);
         venta.setPagoVenta(pagoVenta);
         venta.setCambioVenta(cambioVenta);
-        
+
         em.persist(venta);
         em.getTransaction().commit();
-        
+
         return venta;
     }
-    
-    private void venderArticulo( PuntoventaVenta venta, PuntoventaProducto producto, int cantidadComprada ) {
+
+    private String venderArticulo(PuntoventaVenta venta, PuntoventaProducto producto, int cantidadComprada) {
         
+        String ventaString = "";
+
         em.getTransaction().begin();
-        
+
         PuntoventaCarrito carrito = new PuntoventaCarrito();
-        
+
         carrito.setCantidadProducto(cantidadComprada);
         carrito.setIdProducto(producto);
         carrito.setIdVenta(venta);
         carrito.setTotal(cantidadComprada * producto.getPrecioVenta());
-        producto.setCantidadDisponible( producto.getCantidadDisponible() - cantidadComprada );
+        producto.setCantidadDisponible(producto.getCantidadDisponible() - cantidadComprada);
         
+        ventaString = String.format("%-35s%5d$%10.2f\n", producto.getNombreProducto(), cantidadComprada, carrito.getTotal());
+
         em.persist(carrito);
         em.getTransaction().commit();
-    }
-    
-    private void limpiarCarrito() {
         
+        return ventaString;
+    }
+
+    private void limpiarCarrito() {
+
         deleteRows();
         listaArticulos.clear();
     }
-    
+
     private void addRowProducto(PuntoventaProducto producto, int cantidad) {
 
         double total = producto.getPrecioVenta() * cantidad;

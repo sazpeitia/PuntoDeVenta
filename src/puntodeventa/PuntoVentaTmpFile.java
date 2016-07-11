@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -71,7 +72,7 @@ public class PuntoVentaTmpFile {
         writer.close();
     }
 
-    public void escribirLiena( String linea) {
+    public void escribirLiena(String linea) {
 
         writer.println(linea);
     }
@@ -113,19 +114,47 @@ public class PuntoVentaTmpFile {
         return listaLienas;
     }
 
+    public  void replaceSelected(String textToReplace, String replaceWith) {
+        try {
+            // input the file content to the String "input"
+            BufferedReader file = new BufferedReader(new FileReader(archivo));
+            String line;
+            String input = "";
+
+            while ((line = file.readLine()) != null) {
+                input += line + '\n';
+            }
+
+            file.close();
+
+            System.out.println(input); // check that it's inputted right
+
+            // this if structure determines whether or not to replace "0" or "1"
+           
+           input = input.replace(textToReplace, replaceWith);
+           
+
+            // check if the new input is right
+            System.out.println("----------------------------------" + '\n' + input);
+
+            // write the new String with the replaced line OVER the same file
+            FileOutputStream fileOut = new FileOutputStream(archivo);
+            fileOut.write(input.getBytes());
+            fileOut.close();
+
+        } catch (Exception e) {
+            System.out.println("Problem reading file.");
+        }
+    }
+
     public static void main(String[] args) {
 
-        PuntoVentaTmpFile archivoTmp = new PuntoVentaTmpFile("aqui.txt");
-        archivoTmp.crearAbrirArchivo();
-        archivoTmp.escribirLiena("Hola a todos 2");
-        archivoTmp.cerrarArchivo( );
+        PuntoVentaTmpFile archivoTmp = new PuntoVentaTmpFile("config.txt");
+  
         
-        archivoTmp.crearAbrirArchivo();
-        
-        for (String linea : archivoTmp.leerLineas())
-            System.out.println(linea);
-        
-         archivoTmp.cerrarArchivo( );
+        archivoTmp.replaceSelected("dafualtTicketPrinter=", "dafualtTicketPrinter=algo");
+
+
     }
 
     /**

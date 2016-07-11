@@ -177,11 +177,11 @@ public class JDialogReporteCorteCaja extends javax.swing.JDialog {
 
          resumenCorteCajaJTextPane.setText("");
 
-        String htmlTextBegin = "<html>";
+        String htmlTextBegin = "<html><body>";
         String htmlBodyTableHeader = "<table border=\"3\" style=\"width:100%\"><tr>"
                 + "<td>Número de corte</td><td>Fecha de corte</td><td>Total</td></tr>";
         String htmlBodyTableContent = "";
-        String htmlTextEnd = "</table></html>";
+        String htmlTextEnd = "</body></html>";
 
         int row = 1;
 
@@ -199,6 +199,8 @@ public class JDialogReporteCorteCaja extends javax.swing.JDialog {
             row++;
         }
 
+        htmlBodyTableContent += "</table>";
+        
         resumenCorteCajaJTextPane.setText(htmlTextBegin + htmlBodyTableHeader + htmlBodyTableContent + htmlTextEnd);
     }
     

@@ -8,6 +8,8 @@ package puntoventa.frames;
 import java.awt.event.WindowEvent;
 import java.util.Date;
 import javax.swing.JOptionPane;
+import puntodeventa.PuntoVentaConfiguracion;
+import puntodeventa.PuntoVentaPrinter;
 
 /**
  *
@@ -176,10 +178,14 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
             
             setPagoCompra( Double.parseDouble(pagoJTextField.getText()) );
             setCambioCompra(getPagoCompra()  - totalCompra);
+            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            compraCancelada = false;
+            if ( imprimirTicketJCheckBox.isSelected() ) {
+                imprimeTicket = true;
+            }
         }
         
-        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        compraCancelada = false;
+        
     }//GEN-LAST:event_aceptarJButtonActionPerformed
 
     private void pagoJTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pagoJTextFieldActionPerformed
@@ -239,8 +245,16 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
         
         String pagoTexto = pagoJTextField.getText();
         
+        
         try {
-        int pagoInt = Integer.parseInt( pagoTexto );
+        double pagoDouble = Double.parseDouble( pagoTexto );
+        
+        if ( pagoDouble < totalCompra )
+        {
+            
+            JOptionPane.showMessageDialog(this, "El pago debe ser mayor al total de la compra. Favor de verificar");
+            return false;
+                    }
         }
         
         catch ( NumberFormatException numberFormatException ) {
@@ -252,13 +266,14 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
         
         return true;
     }
-    
+   
     //Custom variables
     private Date fechaCompra;
     private double totalCompra;
     private double pagoCompra;
     private double cambioCompra;
     private boolean compraCancelada;
+    private boolean imprimeTicket;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aceptarJButton;
@@ -339,5 +354,12 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
      */
     public void setPagoCompra(double pagoCompra) {
         this.pagoCompra = pagoCompra;
+    }
+
+    /**
+     * @return the imprimeTicket
+     */
+    public boolean isImprimeTicket() {
+        return imprimeTicket;
     }
 }

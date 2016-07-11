@@ -43,7 +43,7 @@ public class PuntoVentaConfiguracion {
                 
                 if (containsTicket) {
                     
-                    setImpresoraTickets(linea.replace("dafualtTicketPrinter=", ""));
+                    impresoraTickets = linea.replace("dafualtTicketPrinter=", "");
                 }
                 
                 
@@ -51,17 +51,27 @@ public class PuntoVentaConfiguracion {
                 
                 if (containsReport) {
                     
-                    setImpresoraReportes(linea.replace("dafualtReportPrinter=", ""));
+                    impresoraReportes = linea.replace("dafualtReportPrinter=", "");
                 }
             }
         } else {
             
-            archivoConfiguracion.escribirLiena( "dafualtTicketPrinterXX0=" );
+            archivoConfiguracion.escribirLiena( "dafualtTicketPrinter=" );
             archivoConfiguracion.escribirLiena( "dafualtReportPrinter=" );
         }
+        
+        archivoConfiguracion.cerrarArchivo();
     }
     
-
+    public static void main(String[] args) {
+        
+        PuntoVentaConfiguracion config = new PuntoVentaConfiguracion();
+        config.cargarConfiguracion();
+        
+        System.out.println(config.getImpresoraReportes());
+        System.out.println(config.getImpresoraTickets());
+    }
+    
     /**
      * @return the impresoraTickets
      */
@@ -73,6 +83,12 @@ public class PuntoVentaConfiguracion {
      * @param impresoraTickets the impresoraTickets to set
      */
     public void setImpresoraTickets(String impresoraTickets) {
+        
+        String textToReplace = "dafualtTicketPrinter=" + this.impresoraTickets;
+        String replaceWith = "dafualtTicketPrinter=" + impresoraTickets;
+        
+        archivoConfiguracion.replaceSelected(textToReplace, replaceWith);
+        
         this.impresoraTickets = impresoraTickets;
     }
 
@@ -87,6 +103,14 @@ public class PuntoVentaConfiguracion {
      * @param impresoraReportes the impresoraReportes to set
      */
     public void setImpresoraReportes(String impresoraReportes) {
+        
+        String textToReplace = "dafualtReportPrinter=" + this.impresoraReportes;
+        String replaceWith = "dafualtReportPrinter=" + impresoraReportes;
+        
+        archivoConfiguracion.replaceSelected(textToReplace, replaceWith);
+        
         this.impresoraReportes = impresoraReportes;
     }
+
+
 }

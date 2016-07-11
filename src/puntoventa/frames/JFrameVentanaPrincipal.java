@@ -7,6 +7,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.JFrame;
 import puntodeventa.PuntoVentaConfiguracion;
+import puntodeventa.PuntoVentaPrinter;
 
 public class JFrameVentanaPrincipal extends javax.swing.JFrame {
 
@@ -15,6 +16,7 @@ public class JFrameVentanaPrincipal extends javax.swing.JFrame {
     private PuntoVentaConfiguracion configuracion;
     
     public JFrameVentanaPrincipal() {
+        customInit();
         initComponents();
         
         //Localizar la ventana en el centro
@@ -242,7 +244,14 @@ public class JFrameVentanaPrincipal extends javax.swing.JFrame {
 
     private void configuracionJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configuracionJButtonActionPerformed
         
+        JDialogConfiguracion dialogoConfiguracion = new JDialogConfiguracion(this, true);
+        dialogoConfiguracion.setLocationRelativeTo(this);
+        dialogoConfiguracion.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         
+        dialogoConfiguracion.setConfiguracion(configuracion);
+        dialogoConfiguracion.customInit();
+        
+        dialogoConfiguracion.setVisible(true);
     }//GEN-LAST:event_configuracionJButtonActionPerformed
 
     public static void main(String args[]) {
@@ -276,6 +285,18 @@ public class JFrameVentanaPrincipal extends javax.swing.JFrame {
             }
         });
     }
+    
+    // Custom methods
+    private  void customInit() {
+        
+        configuracion = new PuntoVentaConfiguracion();
+        configuracion.cargarConfiguracion();
+        printer = new PuntoVentaPrinter();
+        
+    }
+    
+    // Custom variables
+    private PuntoVentaPrinter printer;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton categoriasJbutton;

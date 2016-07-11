@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.swing.JOptionPane;
+import puntodeventa.PuntoVentaPrinter;
 import puntodeventa.PuntoventaCorteCaja;
 import puntodeventa.sql.PuntoventaCarrito;
 import puntodeventa.sql.PuntoventaVenta;
@@ -170,12 +171,28 @@ public class JDialogReporteVentas extends javax.swing.JDialog {
                 em.persist(corteCaja);
                 em.getTransaction().commit();
 
-                obtenerVentasDelDia();
-                mostrarListaVentaHtml();
+                
 
                 String formatoMensaje = String.format("Se ha realizado el corte "
                         + "correctamente. Favor de retirar $%.2f de la caja", sumaTotal);
                 JOptionPane.showMessageDialog(this, formatoMensaje);
+                
+                int resultado2 = JOptionPane.showConfirmDialog(this, "¿Desea guardar el corte de caja en un archivo html? ");
+                
+                if ( resultado2 == JOptionPane.YES_OPTION ) {
+                    
+                    PuntoVentaPrinter impresora = new PuntoVentaPrinter();
+                    Date currentDate = Calendar.getInstance(Locale.getDefault()).getTime();
+                    SimpleDateFormat formato = new SimpleDateFormat("yyyMMdd-hhmmss");
+                    String fechaFile = formato.format(currentDate);
+                    String file = "ReporteVentas" + fechaFile + ".html";
+                    impresora.printHtmlToFile(reporteVentasJTextPane.getText(),file);
+                    
+                    JOptionPane.showMessageDialog(this, "Se ha guardado el archivo html exitosamente. Busque en la carpeta donde esta instalado el punto de venta.");
+                }
+                
+                obtenerVentasDelDia();
+                mostrarListaVentaHtml();
             }
         } else {
 
@@ -246,12 +263,12 @@ public class JDialogReporteVentas extends javax.swing.JDialog {
 
         reporteVentasJTextPane.setText("");
 
-        String htmlTextBegin = "<html>";
+        String htmlTextBegin = "<html><body>";
         String htmlBodyTableHeader = "<table border=\"3\" style=\"width:100%\"><tr>"
                 + "<td>Número de venta</td><td>Fecha</td><td>Total</td>"
                 + "<td>Pago cliente</td><td>Cambio cliente</td></tr>";
         String htmlBodyTableContent = "";
-        String htmlTextEnd = "</table></html>";
+        String htmlTextEnd = "</body></html>";
 
         int row = 1;
 
@@ -272,6 +289,7 @@ public class JDialogReporteVentas extends javax.swing.JDialog {
             row++;
         }
 
+        htmlBodyTableContent += "</table>";
         reporteVentasJTextPane.setText(htmlTextBegin + htmlBodyTableHeader + htmlBodyTableContent + htmlTextEnd);
     }
 
