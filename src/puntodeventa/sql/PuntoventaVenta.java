@@ -32,7 +32,7 @@ import puntodeventa.PuntoventaCorteCaja;
  * @author SERVIDOR-PC
  */
 @Entity
-@Table(name = "puntoventa_venta")
+@Table(name = "PUNTOVENTA_VENTA")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "PuntoventaVenta.findAll", query = "SELECT p FROM PuntoventaVenta p"),
