@@ -313,7 +313,7 @@ public class JFrameVenta extends javax.swing.JFrame {
     private void concretarVentaJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_concretarVentaJButtonActionPerformed
 
         double totalCompra = 0.0;
-        Date fechaDeCompra = Calendar.getInstance(Locale.getDefault()).getTime();
+       
         int numeroArticulos = carritoJTable.getRowCount();
 
         if (numeroArticulos > 0) {
@@ -329,13 +329,12 @@ public class JFrameVenta extends javax.swing.JFrame {
             ventaResumen.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
             ventaResumen.setTotalCompra(totalCompra);
-            ventaResumen.setFechaCompra(fechaDeCompra);
 
             ventaResumen.setVisible(true);
 
             if (!ventaResumen.isCompraCancelada()) {
 
-                PuntoventaVenta ventaCarrito = nuevaVenta(fechaDeCompra, totalCompra, ventaResumen.getPagoCompra(), ventaResumen.getCambioCompra());
+                PuntoventaVenta ventaCarrito = nuevaVenta(ventaResumen.getFechaCompra(), totalCompra, ventaResumen.getPagoCompra(), ventaResumen.getCambioCompra());
                 String items = "";
 
                 for (int row = 0; row < numeroArticulos; row++) {

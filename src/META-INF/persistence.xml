@@ -8,7 +8,7 @@
     <class>puntodeventa.sql.PuntoventaCategoria</class>
     <class>puntodeventa.PuntoventaCorteCaja</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://azpnethost001:3306/PUNTOVENTA?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://SERVIDOR-PC/PUNTOVENTA?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="PUNTOVENTA"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="PUNTOVENTA"/>

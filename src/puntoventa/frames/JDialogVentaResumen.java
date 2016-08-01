@@ -8,8 +8,7 @@ package puntoventa.frames;
 import java.awt.event.WindowEvent;
 import java.util.Date;
 import javax.swing.JOptionPane;
-import puntodeventa.PuntoVentaConfiguracion;
-import puntodeventa.PuntoVentaPrinter;
+
 
 /**
  *
@@ -37,7 +36,6 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        fechaHoraJTextField = new javax.swing.JTextField();
         totalJTextField = new javax.swing.JTextField();
         pagoJTextField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -45,6 +43,7 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
         cancelarJButton = new javax.swing.JButton();
         aceptarJButton = new javax.swing.JButton();
         imprimirTicketJCheckBox = new javax.swing.JCheckBox();
+        fechaCompraJSpinner = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -61,10 +60,6 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
 
         jLabel3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel3.setText("Pago del Cliente:");
-
-        fechaHoraJTextField.setEditable(false);
-        fechaHoraJTextField.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        fechaHoraJTextField.setToolTipText("");
 
         totalJTextField.setEditable(false);
         totalJTextField.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
@@ -104,20 +99,23 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
         imprimirTicketJCheckBox.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         imprimirTicketJCheckBox.setText("Imprimir ticket");
 
+        fechaCompraJSpinner.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        fechaCompraJSpinner.setModel(new javax.swing.SpinnerDateModel());
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(imprimirTicketJCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(aceptarJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelarJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -125,32 +123,32 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fechaHoraJTextField)
                             .addComponent(totalJTextField)
-                            .addComponent(pagoJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
-                            .addComponent(cambioJTextField))))
+                            .addComponent(pagoJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+                            .addComponent(cambioJTextField)
+                            .addComponent(fechaCompraJSpinner))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fechaHoraJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(fechaCompraJSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(totalJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(totalJTextField)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pagoJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(pagoJTextField)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(cambioJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                    .addComponent(cambioJTextField)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(cancelarJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
                     .addComponent(aceptarJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -178,6 +176,7 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
             
             setPagoCompra( Double.parseDouble(pagoJTextField.getText()) );
             setCambioCompra(getPagoCompra()  - totalCompra);
+            setFechaCompra( (Date) fechaCompraJSpinner.getValue());
             this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
             compraCancelada = false;
             if ( imprimirTicketJCheckBox.isSelected() ) {
@@ -248,7 +247,7 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
         
         try {
         double pagoDouble = Double.parseDouble( pagoTexto );
-        
+
         if ( pagoDouble < totalCompra )
         {
             
@@ -266,7 +265,7 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
         
         return true;
     }
-   
+    
     //Custom variables
     private Date fechaCompra;
     private double totalCompra;
@@ -279,7 +278,7 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
     private javax.swing.JButton aceptarJButton;
     private javax.swing.JTextField cambioJTextField;
     private javax.swing.JButton cancelarJButton;
-    private javax.swing.JTextField fechaHoraJTextField;
+    private javax.swing.JSpinner fechaCompraJSpinner;
     private javax.swing.JCheckBox imprimirTicketJCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -331,7 +330,7 @@ public class JDialogVentaResumen extends javax.swing.JDialog {
     public void setFechaCompra(Date fechaCompra) {
         System.out.println("---->setFechaCompra");
         this.fechaCompra = fechaCompra;
-        fechaHoraJTextField.setText( String.valueOf(fechaCompra.toString()) );
+        
     }
 
     /**
