@@ -18,7 +18,6 @@ import javax.persistence.TypedQuery;
 import javax.swing.JOptionPane;
 import puntodeventa.PuntoVentaPrinter;
 import puntodeventa.PuntoventaCorteCaja;
-import puntodeventa.sql.PuntoventaCarrito;
 import puntodeventa.sql.PuntoventaVenta;
 
 /**

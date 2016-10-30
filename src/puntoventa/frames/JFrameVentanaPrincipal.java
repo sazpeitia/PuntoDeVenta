@@ -6,24 +6,25 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import puntodeventa.PuntoVentaConfiguracion;
 import puntodeventa.PuntoVentaPrinter;
 
 public class JFrameVentanaPrincipal extends javax.swing.JFrame {
 
-    private final EntityManager em;
-    private final EntityManagerFactory emf;
+    private EntityManager em;
+    private EntityManagerFactory emf;
     private PuntoVentaConfiguracion configuracion;
     
     public JFrameVentanaPrincipal() {
-        customInit();
+        
         initComponents();
         
         //Localizar la ventana en el centro
+        customInit();
         this.setLocationRelativeTo(null);
         
-        emf = Persistence.createEntityManagerFactory("PuntoDeVentaPU");
-        em = emf.createEntityManager();
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -292,7 +293,34 @@ public class JFrameVentanaPrincipal extends javax.swing.JFrame {
         configuracion = new PuntoVentaConfiguracion();
         configuracion.cargarConfiguracion();
         printer = new PuntoVentaPrinter();
+        initConnection();
         
+    }
+    
+    private void initConnection() {
+        
+        String mensajeError = "";
+        
+        try {
+            emf = Persistence.createEntityManagerFactory("PuntoDeVentaPU");
+            em = emf.createEntityManager();
+        }
+        
+        catch ( Exception e ) {
+            
+            mensajeError = "No es posible establecer conexión con el servidor. El mensaje de error es: \n\n" + e.getMessage() ;
+        }
+        
+        if ( mensajeError.equals("") ) {
+            
+            JOptionPane.showMessageDialog(this, "Bienvenido s su punto de venta");
+        }
+        
+        else {
+            
+            JOptionPane.showMessageDialog(this, mensajeError );
+            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        }
     }
     
     // Custom variables
