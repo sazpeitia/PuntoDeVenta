@@ -44,6 +44,7 @@
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                   <Component id="resumenCorteCajaJButton" pref="300" max="32767" attributes="0"/>
                                   <Component id="resumenVentasJButton" max="32767" attributes="0"/>
+                                  <Component id="resumeGananciasJButton" alignment="0" pref="300" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="configuracionJButton" max="32767" attributes="0"/>
@@ -88,7 +89,10 @@
                   <Component id="productosJbutton" pref="50" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="categoriasJbutton" min="-2" pref="50" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="categoriasJbutton" alignment="3" min="-2" pref="50" max="-2" attributes="0"/>
+                  <Component id="resumeGananciasJButton" alignment="3" min="-2" pref="50" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace pref="90" max="32767" attributes="0"/>
               <Component id="salirJButton" min="-2" pref="50" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -238,6 +242,21 @@
           </Border>
         </Property>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="resumeGananciasJButton">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Arial" size="14" style="0"/>
+        </Property>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/puntoventa/frames/reporte.png"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="RESUMEN GANANCIAS"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resumeGananciasJButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

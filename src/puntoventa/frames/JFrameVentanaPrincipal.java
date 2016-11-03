@@ -41,6 +41,7 @@ public class JFrameVentanaPrincipal extends javax.swing.JFrame {
         resumenCorteCajaJButton = new javax.swing.JButton();
         configuracionJButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        resumeGananciasJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PUNTO DE VENTA");
@@ -129,6 +130,16 @@ public class JFrameVentanaPrincipal extends javax.swing.JFrame {
         jLabel1.setText("Punto de Venta");
         jLabel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        resumeGananciasJButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        resumeGananciasJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/puntoventa/frames/reporte.png"))); // NOI18N
+        resumeGananciasJButton.setText("RESUMEN GANANCIAS");
+        resumeGananciasJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        resumeGananciasJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resumeGananciasJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -147,7 +158,8 @@ public class JFrameVentanaPrincipal extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(resumenCorteCajaJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-                                    .addComponent(resumenVentasJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(resumenVentasJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(resumeGananciasJButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(configuracionJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
@@ -179,7 +191,9 @@ public class JFrameVentanaPrincipal extends javax.swing.JFrame {
                     .addComponent(resumenCorteCajaJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(productosJbutton, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(categoriasJbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(categoriasJbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(resumeGananciasJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
                 .addComponent(salirJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -254,6 +268,19 @@ public class JFrameVentanaPrincipal extends javax.swing.JFrame {
         
         dialogoConfiguracion.setVisible(true);
     }//GEN-LAST:event_configuracionJButtonActionPerformed
+
+    private void resumeGananciasJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeGananciasJButtonActionPerformed
+        
+        JDialogReporteGanancias reporte = new JDialogReporteGanancias(this, true);
+        reporte.setLocationRelativeTo(this);
+        reporte.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        
+        reporte.setEm(em);
+        reporte.setEmf(emf);
+        
+        reporte.customInit();
+        reporte.setVisible(true);
+    }//GEN-LAST:event_resumeGananciasJButtonActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -333,6 +360,7 @@ public class JFrameVentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JButton productosJbutton;
+    private javax.swing.JButton resumeGananciasJButton;
     private javax.swing.JButton resumenCorteCajaJButton;
     private javax.swing.JButton resumenVentasJButton;
     private javax.swing.JButton salirJButton;
