@@ -334,27 +334,39 @@ public class JFrameProducto extends javax.swing.JFrame {
 
         TypedQuery<PuntoventaProducto> typedQuery;
         typedQuery = em.createNamedQuery(
-                "PuntoventaProducto.findAll", PuntoventaProducto.class);
+                "PuntoventaProducto.findAll", PuntoventaProducto.class).setMaxResults(100);
         listaProductos = typedQuery.getResultList();
     }
     
     private void getProductsByName ( String productName) {
         
-        List<PuntoventaProducto> listaProductosEncontrados;
-        String nombreLike = "%" + productName;
-        nombreLike += "%";
-        TypedQuery<PuntoventaProducto> typedQuery;
-        typedQuery = em.createNamedQuery(
-                "PuntoventaProducto.findLikeNombreProducto", PuntoventaProducto.class);
-        typedQuery.setParameter("nombreProductoLike", nombreLike);
+        List<PuntoventaProducto> listaProductosEncontrados = null;
+        
+        if ( productName.length() > 0 ) {
+            
+            String nombreLike = "%" + productName;
+            nombreLike += "%";
+            TypedQuery<PuntoventaProducto> typedQuery;
+            typedQuery = em.createNamedQuery(
+                    "PuntoventaProducto.findLikeNombreProducto", PuntoventaProducto.class);
+            typedQuery.setParameter("nombreProductoLike", nombreLike);
 
-        try {
+            try {
+                listaProductosEncontrados = typedQuery.getResultList();
+                
+            } catch (NoResultException noResultException) {
+
+                System.out.println( noResultException.getMessage() );
+                listaProductosEncontrados = null;
+            }
+        }
+        
+        else {
+            
+            TypedQuery<PuntoventaProducto> typedQuery;
+            typedQuery = em.createNamedQuery(
+                "PuntoventaProducto.findAll", PuntoventaProducto.class).setMaxResults(100);
             listaProductosEncontrados = typedQuery.getResultList();
-            System.out.println("Se obtiene resultado");
-        } catch (NoResultException noResultException) {
-
-            System.out.println("noResultException");
-            listaProductosEncontrados = null;
         }
         
         listaProductos = listaProductosEncontrados;
@@ -385,7 +397,7 @@ public class JFrameProducto extends javax.swing.JFrame {
         modelo.addRow(new Object[]{
             producto.getIdProducto(),
             producto.getNombreProducto(),
-            producto.getIdCategoria().getNombreCategoria(),
+            producto.getIdCategoria() == null ? "" : producto.getIdCategoria().getNombreCategoria(),
             producto.getPrecioCompra(),
             producto.getPrecioVenta(),
             producto.getCantidadDisponible()

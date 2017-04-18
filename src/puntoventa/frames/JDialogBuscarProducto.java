@@ -57,9 +57,9 @@ public class JDialogBuscarProducto extends javax.swing.JDialog {
         });
 
         busquedaJTextField.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        busquedaJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                busquedaJTextFieldKeyReleased(evt);
+        busquedaJTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                busquedaJTextFieldActionPerformed(evt);
             }
         });
 
@@ -149,9 +149,14 @@ public class JDialogBuscarProducto extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_aceptarJButtonActionPerformed
 
-    private void busquedaJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_busquedaJTextFieldKeyReleased
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+       
+        customInit();
+    }//GEN-LAST:event_formWindowOpened
 
-        System.out.println("Pasa por evento de escritura");
+    private void busquedaJTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busquedaJTextFieldActionPerformed
+        
+        //System.out.println("Pasa por evento de escritura");
         
         listaProductos = buscarLikeNombre(busquedaJTextField.getText());
         
@@ -168,13 +173,7 @@ public class JDialogBuscarProducto extends javax.swing.JDialog {
                 listModel.removeAllElements();
             }
         }
- 
-    }//GEN-LAST:event_busquedaJTextFieldKeyReleased
-
-    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-       
-        customInit();
-    }//GEN-LAST:event_formWindowOpened
+    }//GEN-LAST:event_busquedaJTextFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -231,6 +230,12 @@ public class JDialogBuscarProducto extends javax.swing.JDialog {
             pasaValidacion = false;
         }
         
+        if ( listaProductosJList.getSelectedValue().equals( LEYENDA01 ) ) {
+            
+            JOptionPane.showMessageDialog(this, "Debe seleccionar algun producto. Favor de verificar.");
+            pasaValidacion = false;
+        }
+        
         return pasaValidacion;
     }
     
@@ -239,12 +244,15 @@ public class JDialogBuscarProducto extends javax.swing.JDialog {
         listModel = new DefaultListModel<String>();
         listaProductosJList.setModel(listModel);
         
-        listaProductos = buscarLikeNombre(busquedaJTextField.getText());
-        
-        if ( listaProductos != null  ) {
+        if ( listModel == null ) {
             
-            mostrarProductosEnLista(listaProductos);
+            listModel = new DefaultListModel();
+            listaProductosJList.setModel(listModel);
         }
+        
+        listModel.removeAllElements();
+        
+        listModel.addElement( LEYENDA01 );
     }
     
     private void mostrarProductosEnLista( List<PuntoventaProducto>  listaProductos ) {
@@ -261,28 +269,50 @@ public class JDialogBuscarProducto extends javax.swing.JDialog {
         
         for ( PuntoventaProducto productoActual : listaProductos ) {
             
-            listModel.addElement( productoActual.getNombreProducto() );
-            System.out.println(productoActual.getNombreProducto());
+            String conFormato = String.format("$%.2f - %s", 
+                    productoActual.getPrecioCompra(),
+                    productoActual.getNombreProducto() );
+            listModel.addElement( conFormato );
         }
     }
 
     private List<PuntoventaProducto> buscarLikeNombre(String nombre) {
 
-        List<PuntoventaProducto> listaProductosEncontrados;
-        String nombreLike = "%" + nombre;
-        nombreLike += "%";
-        TypedQuery<PuntoventaProducto> typedQuery;
-        typedQuery = em.createNamedQuery(
-                "PuntoventaProducto.findLikeNombreProducto", PuntoventaProducto.class);
-        typedQuery.setParameter("nombreProductoLike", nombreLike);
+        List<PuntoventaProducto> listaProductosEncontrados = null;
+        
+        if (nombre.length() > 0 )
+        {
 
-        try {
-            listaProductosEncontrados = typedQuery.getResultList();
-            System.out.println("Se obtiene resultado");
-        } catch (NoResultException noResultException) {
+            String nombreLike = "%" + nombre;
+            nombreLike += "%";
+            TypedQuery<PuntoventaProducto> typedQuery;
+            typedQuery = em.createNamedQuery(
+                    "PuntoventaProducto.findLikeNombreProducto", PuntoventaProducto.class);
+            typedQuery.setParameter("nombreProductoLike", nombreLike);
 
-            System.out.println("Excepción");
-            listaProductosEncontrados = null;
+            try {
+                listaProductosEncontrados = typedQuery.getResultList();
+                //System.out.println("Se obtiene resultado");
+            } catch (NoResultException noResultException) {
+
+                //System.out.println("Excepción");
+                listaProductosEncontrados = null;
+            }
+        } else {
+            
+            TypedQuery<PuntoventaProducto> typedQuery;
+            typedQuery = em.createNamedQuery(
+                    "PuntoventaProducto.findAll", PuntoventaProducto.class).setMaxResults(100);
+             try {
+                 
+                listaProductosEncontrados = typedQuery.getResultList();
+                
+            } catch (NoResultException noResultException) {
+
+                 System.out.println(noResultException.getMessage());
+                listaProductosEncontrados = null;
+            }
+            
         }
 
         return listaProductosEncontrados;
@@ -294,6 +324,7 @@ public class JDialogBuscarProducto extends javax.swing.JDialog {
     private boolean cancelado;
     private EntityManager em;
     private DefaultListModel listModel;
+    private static final String LEYENDA01 = "Escriba parte del nombre del producto y presione enter.";
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aceptarJButton;
