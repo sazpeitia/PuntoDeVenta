@@ -81,15 +81,19 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
         jLabel4.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel4.setText("Cantidad:");
 
-        cantidadJSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
+        cantidadJSpinner.setModel(new javax.swing.SpinnerNumberModel(1.0d, 0.0d, null, 1.0d));
         cantidadJSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 cantidadJSpinnerStateChanged(evt);
             }
         });
 
-        totalJTextField.setEditable(false);
         totalJTextField.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        totalJTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                totalJTextFieldActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel5.setText("Total:");
@@ -189,8 +193,8 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
             nombreProductoJTextField.setText( producto.getNombreProducto() );
             precioJTextField.setText( producto.getPrecioVenta().toString() );
             
-            int cantidadTmp = (Integer)cantidadJSpinner.getValue();
-            double totalTmp = cantidadTmp * producto.getPrecioVenta();
+            Double cantidadTmp = (Double)cantidadJSpinner.getValue();
+            Double totalTmp = cantidadTmp * producto.getPrecioVenta();
             
             totalJTextField.setText( String.valueOf(totalTmp) );
         }
@@ -208,9 +212,9 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
 
     private void cantidadJSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_cantidadJSpinnerStateChanged
         
-         int cantidadTmp = (Integer)cantidadJSpinner.getValue();
-        double precioTmp = Double.parseDouble(precioJTextField.getText());
-        double totalTmp = cantidadTmp * precioTmp;
+        Double cantidadTmp = (Double)cantidadJSpinner.getValue();
+        Double precioTmp = Double.parseDouble(precioJTextField.getText());
+        Double totalTmp = cantidadTmp * precioTmp;
         totalJTextField.setText(String.valueOf(totalTmp));
     }//GEN-LAST:event_cantidadJSpinnerStateChanged
 
@@ -218,11 +222,19 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
         
         if ( valida() ) {
             
-            setCantidad((int) (Integer)cantidadJSpinner.getValue());
+            setCantidad((Double)cantidadJSpinner.getValue());
             this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
             cancelado = false;
         }
     }//GEN-LAST:event_aceptarJButtonActionPerformed
+
+    private void totalJTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalJTextFieldActionPerformed
+        
+        Double totalTmp = Double.parseDouble(totalJTextField.getText());
+        Double precioTmp = Double.parseDouble(precioJTextField.getText());
+        Double cantidadTmp = (1 / precioTmp ) * totalTmp;
+        cantidadJSpinner.setValue(cantidadTmp);
+    }//GEN-LAST:event_totalJTextFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -284,7 +296,7 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
     private PuntoventaProducto producto;
     private boolean modoEdicion;
     private boolean cancelado;
-    private int cantidad;
+    private Double cantidad;
     private double total;
     private EntityManager em;
 
@@ -338,7 +350,7 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
     /**
      * @return the cantidad
      */
-    public int getCantidad() {
+    public Double getCantidad() {
         return cantidad;
     }
 
@@ -359,10 +371,10 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
     /**
      * @param cantidad the cantidad to set
      */
-    public void setCantidad(int cantidad) {
+    public void setCantidad(Double cantidad) {
         this.cantidad = cantidad;
         
         cantidadJSpinner.setValue( cantidad );
-        totalJTextField.setText( String.valueOf( cantidad * producto.getPrecioVenta() ) );
+        totalJTextField.setText( String.format("%f",cantidad * producto.getPrecioVenta() ) );
     }
 }

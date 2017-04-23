@@ -44,7 +44,7 @@ public class PuntoventaCarrito implements Serializable {
     private Integer idCarrito;
     @Basic(optional = false)
     @Column(name = "CANTIDAD_PRODUCTO")
-    private int cantidadProducto;
+    private double cantidadProducto;
     @JoinColumn(name = "ID_PRODUCTO", referencedColumnName = "ID_PRODUCTO")
     @ManyToOne(optional = false)
     private PuntoventaProducto idProducto;
@@ -72,11 +72,11 @@ public class PuntoventaCarrito implements Serializable {
         this.idCarrito = idCarrito;
     }
 
-    public int getCantidadProducto() {
+    public double getCantidadProducto() {
         return cantidadProducto;
     }
 
-    public void setCantidadProducto(int cantidadProducto) {
+    public void setCantidadProducto(double cantidadProducto) {
         this.cantidadProducto = cantidadProducto;
     }
 

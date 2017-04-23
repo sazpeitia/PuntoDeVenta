@@ -219,7 +219,7 @@ public class JDialogProducto extends javax.swing.JDialog {
 
             puntoventaProducto.setPrecioCompra(Double.parseDouble(precioComprajTextField.getText()));
             puntoventaProducto.setPrecioVenta(Double.parseDouble(precioVentajTextField.getText()));
-            puntoventaProducto.setCantidadDisponible(Integer.parseInt(cantidadDisponiblejTextField.getText()));
+            puntoventaProducto.setCantidadDisponible(Double.parseDouble(cantidadDisponiblejTextField.getText()));
 
             this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
             cancelado = false;
@@ -341,7 +341,7 @@ public class JDialogProducto extends javax.swing.JDialog {
 
             Double.parseDouble(precioComprajTextField.getText());
             Double.parseDouble(precioVentajTextField.getText());
-            Integer.parseInt(cantidadDisponiblejTextField.getText());
+            Double.parseDouble(cantidadDisponiblejTextField.getText());
         } catch (NumberFormatException numberFormatException) {
 
             JOptionPane.showMessageDialog(this, "El formato de precio es inválido. Por favor ingrese unicamente dígitos.");

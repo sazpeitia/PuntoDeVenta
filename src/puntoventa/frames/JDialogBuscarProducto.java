@@ -270,7 +270,7 @@ public class JDialogBuscarProducto extends javax.swing.JDialog {
         for ( PuntoventaProducto productoActual : listaProductos ) {
             
             String conFormato = String.format("$%.2f - %s", 
-                    productoActual.getPrecioCompra(),
+                    productoActual.getPrecioVenta(),
                     productoActual.getNombreProducto() );
             listModel.addElement( conFormato );
         }

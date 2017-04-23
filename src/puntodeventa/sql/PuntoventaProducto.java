@@ -58,7 +58,7 @@ public class PuntoventaProducto implements Serializable {
     @Column(name = "PRECIO_COMPRA")
     private Double precioCompra;
     @Column(name = "CANTIDAD_DISPONIBLE")
-    private Integer cantidadDisponible;
+    private Double cantidadDisponible;
     @JoinColumn(name = "ID_CATEGORIA", referencedColumnName = "ID_CATEGORIA")
     @ManyToOne
     private PuntoventaCategoria idCategoria;
@@ -112,11 +112,11 @@ public class PuntoventaProducto implements Serializable {
         this.precioCompra = precioCompra;
     }
 
-    public Integer getCantidadDisponible() {
+    public Double getCantidadDisponible() {
         return cantidadDisponible;
     }
 
-    public void setCantidadDisponible(Integer cantidadDisponible) {
+    public void setCantidadDisponible(Double cantidadDisponible) {
         this.cantidadDisponible = cantidadDisponible;
     }
 

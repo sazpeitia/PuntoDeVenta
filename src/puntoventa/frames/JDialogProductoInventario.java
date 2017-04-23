@@ -65,6 +65,7 @@ public class JDialogProductoInventario extends javax.swing.JDialog {
         jLabel2.setText("Inventario");
 
         cantidadJSpinner.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        cantidadJSpinner.setModel(new javax.swing.SpinnerNumberModel(1.0d, null, null, 1.0d));
 
         jLabel3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel3.setText("Cantidad a adicionar:");
@@ -163,9 +164,9 @@ public class JDialogProductoInventario extends javax.swing.JDialog {
         
         if ( valida() ) {
             
-            Integer cantidadAdicionar = (Integer)cantidadJSpinner.getValue();
-            Integer cantidadActual = producto.getCantidadDisponible();
-            Integer cantidadNueva = cantidadActual + cantidadAdicionar;
+            Double cantidadAdicionar = (Double)cantidadJSpinner.getValue();
+            Double cantidadActual = producto.getCantidadDisponible();
+            Double cantidadNueva = cantidadActual + cantidadAdicionar;
             producto.setCantidadDisponible( cantidadNueva );
             this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
             cancelado = false;
@@ -232,7 +233,7 @@ public class JDialogProductoInventario extends javax.swing.JDialog {
         boolean pasaValidacion = true;
         
         try {
-            Integer cantidadASumar = (Integer)cantidadJSpinner.getValue();
+            Double cantidadASumar = (Double)cantidadJSpinner.getValue();
             System.out.println(cantidadASumar);
         }
         catch ( ClassCastException castException ) {

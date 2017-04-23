@@ -225,7 +225,7 @@ public class JFrameVenta extends javax.swing.JFrame {
             PuntoventaProducto producto = buscarProducto(codigoBarrasCache);
 
             if (producto != null) {
-                adicionarProductoACarrito(producto, 1);
+                adicionarProductoACarrito(producto, 1.0);
                 codigoBarrasCache = new String();
             }
         } else {
@@ -248,7 +248,7 @@ public class JFrameVenta extends javax.swing.JFrame {
         if (!articuloCarrito.isCancelado()) {
 
             PuntoventaProducto productoNuevo = articuloCarrito.getProducto();
-            int cantidad = articuloCarrito.getCantidad();
+            Double cantidad = articuloCarrito.getCantidad();
             adicionarProductoACarrito(productoNuevo, cantidad);
         }
 
@@ -259,7 +259,7 @@ public class JFrameVenta extends javax.swing.JFrame {
 
         int row = carritoJTable.getSelectedRow();
         PuntoventaProducto productoAEditar;
-        int cantidadAEditar;
+        Double cantidadAEditar;
 
         if (row == -1) {
 
@@ -275,7 +275,7 @@ public class JFrameVenta extends javax.swing.JFrame {
             articuloCarrito.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
             productoAEditar = listaArticulos.get(row);
-            cantidadAEditar = (Integer) carritoJTable.getValueAt(row, 3);
+            cantidadAEditar = (Double) carritoJTable.getValueAt(row, 3);
 
             articuloCarrito.setProducto(productoAEditar);
             articuloCarrito.setCantidad(cantidadAEditar);
@@ -339,7 +339,7 @@ public class JFrameVenta extends javax.swing.JFrame {
 
                 for (int row = 0; row < numeroArticulos; row++) {
 
-                    items += venderArticulo(ventaCarrito, listaArticulos.get(row), (Integer) carritoJTable.getValueAt(row, 3));
+                    items += venderArticulo(ventaCarrito, listaArticulos.get(row), (Double) carritoJTable.getValueAt(row, 3));
                 }
                 
                 if ( ventaResumen.isImprimeTicket() ) {
@@ -439,7 +439,7 @@ public class JFrameVenta extends javax.swing.JFrame {
         return venta;
     }
 
-    private String venderArticulo(PuntoventaVenta venta, PuntoventaProducto producto, int cantidadComprada) {
+    private String venderArticulo(PuntoventaVenta venta, PuntoventaProducto producto, double cantidadComprada) {
         
         String ventaString = "";
 
@@ -453,7 +453,7 @@ public class JFrameVenta extends javax.swing.JFrame {
         carrito.setTotal(cantidadComprada * producto.getPrecioVenta());
         producto.setCantidadDisponible(producto.getCantidadDisponible() - cantidadComprada);
         
-        ventaString = String.format("%-35s%5d$%10.2f\n", producto.getNombreProducto(), cantidadComprada, carrito.getTotal());
+        ventaString = String.format("%-35s%5.2f$%10.2f\n", producto.getNombreProducto(), cantidadComprada, carrito.getTotal());
 
         em.persist(carrito);
         em.getTransaction().commit();
@@ -467,7 +467,7 @@ public class JFrameVenta extends javax.swing.JFrame {
         listaArticulos.clear();
     }
 
-    private void addRowProducto(PuntoventaProducto producto, int cantidad) {
+    private void addRowProducto(PuntoventaProducto producto, Double cantidad) {
 
         double total = producto.getPrecioVenta() * cantidad;
 
@@ -482,7 +482,7 @@ public class JFrameVenta extends javax.swing.JFrame {
         );
     }
 
-    private void updateCantProducto(int index, int cantidadNueva) {
+    private void updateCantProducto(int index, double cantidadNueva) {
 
         double precioUnitario = (Double) carritoJTable.getValueAt(index, 2);
         double totalNuevo = cantidadNueva * precioUnitario;
@@ -490,9 +490,9 @@ public class JFrameVenta extends javax.swing.JFrame {
         carritoJTable.setValueAt(totalNuevo, index, 4);
     }
 
-    private void sumRowProducto(int index, int cantidad) {
+    private void sumRowProducto(int index, Double cantidad) {
 
-        int cantidadActual = (Integer) carritoJTable.getValueAt(index, 3);
+        Double cantidadActual = (Double) carritoJTable.getValueAt(index, 3);
         cantidadActual += cantidad;
         double precioUnitario = (Double) carritoJTable.getValueAt(index, 2);
         double totalNuevo = cantidadActual * precioUnitario;
@@ -543,7 +543,7 @@ public class JFrameVenta extends javax.swing.JFrame {
 
     }
 
-    private void adicionarProductoACarrito(PuntoventaProducto producto, int cantidad) {
+    private void adicionarProductoACarrito(PuntoventaProducto producto, Double cantidad) {
 
         int index;
 
@@ -556,7 +556,7 @@ public class JFrameVenta extends javax.swing.JFrame {
         }
     }
 
-    private void modificarCantidadDeProductoEnCarrito(PuntoventaProducto producto, int cantidadNueva) {
+    private void modificarCantidadDeProductoEnCarrito(PuntoventaProducto producto, double cantidadNueva) {
 
         int index;
 
