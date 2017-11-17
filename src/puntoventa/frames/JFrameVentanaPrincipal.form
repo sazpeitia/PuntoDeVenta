@@ -31,9 +31,14 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="salirJButton" min="-2" pref="300" max="-2" attributes="0"/>
+                  </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="categoriasJbutton" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="gruposMenuJbutton" alignment="0" max="32767" attributes="0"/>
+                          <Component id="categoriasJbutton" alignment="0" max="32767" attributes="0"/>
                           <Component id="productosJbutton" alignment="0" max="32767" attributes="0"/>
                           <Component id="ventasJbutton" alignment="0" max="32767" attributes="0"/>
                           <Component id="jLabel2" alignment="0" pref="300" max="32767" attributes="0"/>
@@ -56,10 +61,6 @@
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="salirJButton" min="-2" pref="300" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -93,7 +94,9 @@
                   <Component id="categoriasJbutton" alignment="3" min="-2" pref="50" max="-2" attributes="0"/>
                   <Component id="resumeGananciasJButton" alignment="3" min="-2" pref="50" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="90" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="gruposMenuJbutton" min="-2" pref="50" max="-2" attributes="0"/>
+              <EmptySpace pref="34" max="32767" attributes="0"/>
               <Component id="salirJButton" min="-2" pref="50" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -256,6 +259,21 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resumeGananciasJButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="gruposMenuJbutton">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Arial" size="14" style="0"/>
+        </Property>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/puntoventa/frames/carpetas.png"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="GRUPOS"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gruposMenuJbuttonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
