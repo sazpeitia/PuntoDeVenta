@@ -44,6 +44,14 @@ import puntodeventa.PuntoventaCorteCaja;
     @NamedQuery(name = "PuntoventaVenta.findByCambioVenta", query = "SELECT p FROM PuntoventaVenta p WHERE p.cambioVenta = :cambioVenta")})
 public class PuntoventaVenta implements Serializable {
 
+    @JoinColumn(name = "ID_USUARIO_VENTA", referencedColumnName = "ID_USUARIO")
+    @ManyToOne
+    private PuntoventaUsuario idUsuarioVenta;
+    
+    @JoinColumn(name = "ID_EMPRESA", referencedColumnName = "ID_EMPRESA")
+    @ManyToOne
+    private PuntoventaEmpresa idEmpresa;
+    
     @JoinColumn(name = "ID_CORTE_CAJA", referencedColumnName = "ID_CORTE_CAJA")
     @ManyToOne
     private PuntoventaCorteCaja idCorteCaja;
@@ -54,8 +62,8 @@ public class PuntoventaVenta implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID_VENTA")
     private Integer idVenta;
-    @Column(name = "FECHA_VENTA")
-    @Temporal(TemporalType.DATE)
+    @Column(name = "FECHA_VENTA",columnDefinition="DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaVenta;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "TOTAL_VENTA")
@@ -145,7 +153,7 @@ public class PuntoventaVenta implements Serializable {
 
     @Override
     public String toString() {
-        return "puntodeventa.sql.PuntoventaVenta[ idVenta=" + idVenta + " ]";
+        return String.format("%06d", getIdVenta());
     }
 
     public PuntoventaCorteCaja getIdCorteCaja() {
@@ -154,6 +162,34 @@ public class PuntoventaVenta implements Serializable {
 
     public void setIdCorteCaja(PuntoventaCorteCaja idCorteCaja) {
         this.idCorteCaja = idCorteCaja;
+    }
+
+    /**
+     * @return the idEmpresa
+     */
+    public PuntoventaEmpresa getIdEmpresa() {
+        return idEmpresa;
+    }
+
+    /**
+     * @param idEmpresa the idEmpresa to set
+     */
+    public void setIdEmpresa(PuntoventaEmpresa idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
+
+    /**
+     * @return the idUsuarioVenta
+     */
+    public PuntoventaUsuario getIdUsuarioVenta() {
+        return idUsuarioVenta;
+    }
+
+    /**
+     * @param idUsuarioVenta the idUsuarioVenta to set
+     */
+    public void setIdUsuarioVenta(PuntoventaUsuario idUsuarioVenta) {
+        this.idUsuarioVenta = idUsuarioVenta;
     }
     
 }

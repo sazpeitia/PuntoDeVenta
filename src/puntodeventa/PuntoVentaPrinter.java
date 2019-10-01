@@ -24,13 +24,9 @@ import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
 import javax.print.Doc;
 import javax.print.PrintException;
-import javax.print.ServiceUI;
-import javax.print.attribute.HashDocAttributeSet;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
-import javax.print.attribute.standard.DocumentName;
-import javax.print.attribute.standard.JobName;
 import javax.print.event.PrintJobAdapter;
 import javax.print.event.PrintJobEvent;
 import org.apache.commons.io.FileUtils;
@@ -40,8 +36,8 @@ public class PuntoVentaPrinter {
     private String selectedService;
 
 //Ticket attribute content
-    private String contentTicket = "::Papelería COPYMAS::\n"
-            + "Boulevard Everardo Marquez 236 Letra B, Colonia Lomas Residencial, Pachuca de Soto, Hidalgo. CP 42094\n"
+    private String contentTicket = "::{{empresa}}::\n"
+            + "{{direccion}}\n"
             + "FECHA: {{dateTime}}\n"
             //  + //"EXPEDIDO EN: {{expedition}}\n"+
             // "Emiliano Zapata Col. Centro \n"
@@ -62,13 +58,13 @@ public class PuntoVentaPrinter {
             //"CAMBIO: {{change}}\n\n"+
             "=============================\n"
             + "¡GRACIAS POR SU COMPRA!\n"
+            + "Le atendió {{user}}\n"
             + "ESPERAMOS SU VISITA NUEVAMENTE.\n"
-            + "\t::COPYMAS::\n"
             + "\n"
             + "\n\n\n ";
 
 //El constructor que setea los valores a la instancia
-    public void setValuesTicket(String dateTime, String items, String total, String pago, String cambio) {
+    public void setValuesTicket(String dateTime, String items, String total, String pago, String cambio, String empresa, String direccion, String user) {
         //    this.contentTicket = this.contentTicket.replace("{{nameLocal}}", nameLocal);
         //   this.contentTicket = this.contentTicket.replace("{{expedition}}", expedition);
         //    this.contentTicket = this.contentTicket.replace("{{box}}", box);
@@ -79,6 +75,9 @@ public class PuntoVentaPrinter {
         this.contentTicket = this.contentTicket.replace("{{total}}", total);
         this.contentTicket = this.contentTicket.replace("{{pago}}", pago);
         this.contentTicket = this.contentTicket.replace("{{cambio}}", cambio);
+        this.contentTicket = this.contentTicket.replace("{{empresa}}", empresa);
+        this.contentTicket = this.contentTicket.replace("{{direccion}}", direccion);
+        this.contentTicket = this.contentTicket.replace("{{user}}", user);
     }
 
     public PuntoVentaPrinter() {

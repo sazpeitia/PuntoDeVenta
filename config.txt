@@ -1,2 +1,2 @@
-dafualtTicketPrinter=
-dafualtReportPrinter=
+dafualtTicketPrinter=Pos58Printer
+dafualtReportPrinter=Pos58Printer

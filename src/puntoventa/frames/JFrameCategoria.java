@@ -1,20 +1,23 @@
 package puntoventa.frames;
 
+import java.awt.Font;
 import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
-import javax.swing.DefaultCellEditor;
-
-import javax.swing.JComboBox;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
+import javax.swing.table.JTableHeader;
 import puntodeventa.sql.PuntoventaCategoria;
+import puntodeventa.sql.PuntoventaCategoria_;
+import puntodeventa.sql.PuntoventaEmpresa;
 
 /**
  *
@@ -25,19 +28,12 @@ public class JFrameCategoria extends javax.swing.JFrame {
     /**
      * Creates new form JFrameCategoria
      */
-    private final EntityManagerFactory emf;
-    private final EntityManager em;
-    private List<PuntoventaCategoria> listaCategorias;
+    
     
 
     public JFrameCategoria() {
 
         initComponents();
-
-        emf = Persistence.createEntityManagerFactory("PuntoDeVentaPU");
-        em = emf.createEntityManager();
-
-        categoriafindAll();
     }
 
     /**
@@ -62,16 +58,11 @@ public class JFrameCategoria extends javax.swing.JFrame {
         jLabel2.setText("Subcategoria");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                formWindowOpened(evt);
-            }
-        });
+        setTitle("CONTROL CATEGORIAS");
+        setResizable(false);
 
-        closeButton.setText("Cerrar");
+        closeButton.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        closeButton.setText("CERRAR");
         closeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 closeButtonActionPerformed(evt);
@@ -80,22 +71,23 @@ public class JFrameCategoria extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Control de categorias");
+        jLabel3.setText("CONTROL CATEGORIAS");
 
-        catagoriaJTable.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        catagoriaJTable.setAutoCreateRowSorter(true);
+        catagoriaJTable.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
         catagoriaJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Categoria", "Categoria Padre"
+                "ID CATEGORIA", "NOMBRE CATEGORIA", "CATEGORIA PADRE", "EMPRESA"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -106,25 +98,28 @@ public class JFrameCategoria extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        catagoriaJTable.setRowHeight(40);
+        catagoriaJTable.setRowHeight(30);
         catagoriaJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(catagoriaJTable);
 
-        addRowButton.setText("Nuevo");
+        addRowButton.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        addRowButton.setText("NUEVO");
         addRowButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addRowButtonActionPerformed(evt);
             }
         });
 
-        saveCategoryButton.setText("Editar");
+        saveCategoryButton.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        saveCategoryButton.setText("EDITAR");
         saveCategoryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveCategoryButtonActionPerformed(evt);
             }
         });
 
-        eliminarjButton.setText("Eliminar");
+        eliminarjButton.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        eliminarjButton.setText("ELIMINAR");
         eliminarjButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 eliminarjButtonActionPerformed(evt);
@@ -138,14 +133,14 @@ public class JFrameCategoria extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 1079, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 615, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(addRowButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(saveCategoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(eliminarjButton, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(addRowButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(saveCategoryButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(eliminarjButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                             .addComponent(closeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
@@ -153,76 +148,33 @@ public class JFrameCategoria extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(addRowButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(addRowButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(saveCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(saveCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(eliminarjButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(eliminarjButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE))
+                        .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void categoriafindAll() {
-
-        TypedQuery<PuntoventaCategoria> typedQuery;
-        typedQuery = em.createNamedQuery(
-                "PuntoventaCategoria.findAll", PuntoventaCategoria.class);
-        listaCategorias = typedQuery.getResultList();
-    }
-
-    private void addJComboBoxColumn() {
-
-        categoriafindAll();
-
-        TableColumn subCategoryColumn = catagoriaJTable.getColumnModel().getColumn(2);
-
-        JComboBox subCategoryCombo = new JComboBox();
-
-        List<PuntoventaCategoria> listaCategoriasTmp = listaCategorias;
-
-        for (PuntoventaCategoria categoria : listaCategoriasTmp) {
-            subCategoryCombo.addItem(categoria.getNombreCategoria());
-        }
-
-        subCategoryCombo.addItem("");
-
-        subCategoryColumn.setCellEditor(new DefaultCellEditor(subCategoryCombo));
-    }
-
-    private void frameCategoriaMostrarCategorias() {
-
-        categoriafindAll();
-        deleteRows();
-
-        for (PuntoventaCategoria categoria : listaCategorias) {
-
-            addRow(categoria);
-        }
-    }
-
-    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-
-        addJComboBoxColumn();
-        frameCategoriaMostrarCategorias();
-    }//GEN-LAST:event_formWindowOpened
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
 
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_closeButtonActionPerformed
 
-    private void deleteRows() {
+    private void deleteRows(JTable tabla) {
 
-        DefaultTableModel dm = (DefaultTableModel) catagoriaJTable.getModel();
+        DefaultTableModel dm = (DefaultTableModel) tabla.getModel();
         int rowCount = dm.getRowCount();
         //Remove rows one by one from the end of the table
         for (int i = rowCount - 1; i >= 0; i--) {
@@ -230,89 +182,86 @@ public class JFrameCategoria extends javax.swing.JFrame {
         }
     }
 
-    public void stopJTableEditing() {
-
-        TableCellEditor editor = catagoriaJTable.getCellEditor();
-        if (editor != null) {
-            editor.stopCellEditing();
-        }
-    }
-
     private void saveCategoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveCategoryButtonActionPerformed
 
-        try {
-            int idSelectedRow = catagoriaJTable.getSelectedRow();
-            PuntoventaCategoria categoriaSeleccionada = listaCategorias.get(idSelectedRow);
+        Object objeto = obtenerObjetoSeleccionado(catagoriaJTable, 1);
+        
+        if (objeto != null) {
+            JDialogCategoria dialogModificar = new JDialogCategoria(this, true);
+            dialogModificar.setEm(getEm());            
+            dialogModificar.setEmpresa(getEmpresa());
+            dialogModificar.inicializar();
+            dialogModificar.setCategoria((PuntoventaCategoria)objeto);
+            dialogModificar.setModoEdicion(true);
+            dialogModificar.setLocationRelativeTo(this);
+            dialogModificar.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+            dialogModificar.setVisible(true);
+            if (!dialogModificar.isCancelado()) {
 
-            em.getTransaction().begin();
-            
+                deleteRows(catagoriaJTable);
+                mostrarCategoriasEnTabla(selectCategoriasEmpresa(getEmpresa()), catagoriaJTable);
+            }
+        } else {
 
-            JDialogCategoria editarCategoria = new JDialogCategoria(this, true);
-            editarCategoria.setEditing( true );
-            editarCategoria.setCategoria(categoriaSeleccionada);
-            editarCategoria.setListaCategorias(listaCategorias);
-            editarCategoria.setEm(em);
-            editarCategoria.setLocationRelativeTo(this);
-            editarCategoria.setVisible(true);
-            editarCategoria.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-
-            //em.persist( categoriaSeleccionada );
-            em.getTransaction().commit();
-
-            frameCategoriaMostrarCategorias();
-        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {
-
-            JOptionPane.showMessageDialog(this, "Debe seleccionar alguna categoría de la lista para editar");
+            mensajeValidacionSeleccion(this);
         }
     }//GEN-LAST:event_saveCategoryButtonActionPerformed
 
-    private void addRow() {
-
-        DefaultTableModel modelo = (DefaultTableModel) catagoriaJTable.getModel();
-        modelo.addRow(new Object[]{0, "", ""});
-    }
-
-    private void addRow(PuntoventaCategoria categoria) {
-
-        DefaultTableModel modelo = (DefaultTableModel) catagoriaJTable.getModel();
-        modelo.addRow(new Object[]{
-            categoria.getIdCategoria(),
-            categoria.getNombreCategoria(),
-            categoria.getIdCategoriaPadre() != null ? categoria.getIdCategoriaPadre().getNombreCategoria() : null});
-    }
 
     private void addRowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRowButtonActionPerformed
 
-        em.getTransaction().begin();
+        JDialogCategoria dialogNuevo = new JDialogCategoria(this, true);
+        dialogNuevo.setEm(getEm());
+        dialogNuevo.setEmpresa(getEmpresa());
+        dialogNuevo.inicializar();
+        dialogNuevo.setLocationRelativeTo(this);
+        dialogNuevo.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        dialogNuevo.setVisible(true);
+        if (!dialogNuevo.isCancelado()) {
 
-        PuntoventaCategoria categoriaNueva = new PuntoventaCategoria();
-        JDialogCategoria editarCategoria = new JDialogCategoria(this, true);
-        editarCategoria.setListaCategorias(listaCategorias);
-        editarCategoria.setCategoria(categoriaNueva);
-        editarCategoria.setEm(em);
-        editarCategoria.setLocationRelativeTo(this);
-        editarCategoria.setVisible(true);
-        editarCategoria.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-
-        if (!editarCategoria.isCanceled()) {
-            em.persist(categoriaNueva);
-            em.getTransaction().commit();
-        } else {
-            em.getTransaction().rollback();
+            deleteRows(catagoriaJTable);
+            mostrarCategoriasEnTabla(selectCategoriasEmpresa(getEmpresa()), catagoriaJTable);
         }
-
-        frameCategoriaMostrarCategorias();
     }//GEN-LAST:event_addRowButtonActionPerformed
 
     private void eliminarjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarjButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_eliminarjButtonActionPerformed
-
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         
-        em.close();
-        emf.close();
-    }//GEN-LAST:event_formWindowClosing
+        Object objeto = obtenerObjetoSeleccionado(catagoriaJTable, 1);
+
+        if (objeto != null) {
+            int respuesta = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Desea continuar con la eliminación de esta categoria? "
+                    + "No se podrán revertir los cambios una vez confirmado",
+                    "Confirmar",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            if (respuesta == JOptionPane.YES_OPTION) {
+
+                boolean seElimino = eliminarCategoria((PuntoventaCategoria) objeto);
+
+                if (seElimino) {
+
+                    deleteRows(catagoriaJTable);
+                    mostrarCategoriasEnTabla(selectCategoriasEmpresa(getEmpresa()), catagoriaJTable);
+                } else {
+                    
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Sucedió un error y no fue posible eliminar la categoria, "
+                                    + "intente nuevamente por favor.",
+                            "Error", 
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+        } else {
+
+            mensajeValidacionSeleccion(this);
+        }
+    }//GEN-LAST:event_eliminarjButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -343,6 +292,7 @@ public class JFrameCategoria extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new JFrameCategoria().setVisible(true);
             }
@@ -359,4 +309,131 @@ public class JFrameCategoria extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton saveCategoryButton;
     // End of variables declaration//GEN-END:variables
+
+    private EntityManager em;
+    private PuntoventaEmpresa empresa;
+    
+    public void inicializar() {
+        
+        mostrarCategoriasEnTabla(selectCategoriasEmpresa(getEmpresa()), catagoriaJTable);
+        cambiarFuenteTabla(catagoriaJTable, new Font("Arial", Font.PLAIN, 15));
+    }
+    
+    private void cambiarFuenteTabla(JTable tabla, Font fuente) {
+
+        JTableHeader header = tabla.getTableHeader();
+        header.setFont(fuente);
+    }
+    
+    private void mensajeValidacionSeleccion(JFrame frame) {
+
+        JLabel label = new JLabel("Debe seleccionar un objeto de la lista.");
+        label.setFont(new Font("Arial", Font.PLAIN, 15));
+        JOptionPane.showMessageDialog(frame, label, "Mensaje de validación", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    
+    private Object obtenerObjetoSeleccionado(JTable tabla, int column) {
+        
+        int idSelectedRow = -100;
+        Object objectoSeleccionado = null;
+
+        try {
+
+            idSelectedRow = tabla.getSelectedRow();
+            objectoSeleccionado = tabla.getValueAt(idSelectedRow, column);
+
+        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {
+            System.out.println("Debe seleccionar un objeto de la lista: " + idSelectedRow);
+        } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+            System.out.println("Debe seleccionar un objeto de la lista: " + idSelectedRow);
+        }
+        return objectoSeleccionado;
+    }
+    
+    private boolean eliminarCategoria(PuntoventaCategoria categoria) {
+
+        try {
+            em.getTransaction().begin();
+            
+            em.remove(categoria);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception exception) {
+
+            try {
+                em.getTransaction().rollback();
+            } catch (Exception exception1) {
+                System.out.println("No es posible hacer rollback en este punto");
+            }
+
+            System.out.println(exception);
+
+
+            return false;
+        }
+    }
+    
+    private List<PuntoventaCategoria> selectCategoriasEmpresa( PuntoventaEmpresa empresa ){
+        
+        CriteriaBuilder cb = getEm().getCriteriaBuilder();
+
+        CriteriaQuery<PuntoventaCategoria> cq = cb.createQuery(PuntoventaCategoria.class);
+        Root<PuntoventaCategoria> categoriasEmpresa = cq.from(PuntoventaCategoria.class);
+
+        cq.where(cb.equal(categoriasEmpresa.get(PuntoventaCategoria_.idEmpresa), empresa));
+        cq.select(categoriasEmpresa);
+
+        TypedQuery<PuntoventaCategoria> q = getEm().createQuery(cq);
+    
+        List<PuntoventaCategoria> listaItems = q.getResultList();
+        return listaItems;
+    }
+    
+    private void mostrarCategoriasEnTabla( List<PuntoventaCategoria> categorias, JTable tabla ){
+        
+        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+        
+        for (PuntoventaCategoria categoria : categorias) {
+
+            modelo.addRow(new Object[]{
+                String.format("%05d",categoria.getIdCategoria()),
+                categoria,
+                categoria.getIdCategoriaPadre() == null ?
+                        "" :
+                        categoria.getIdCategoriaPadre().getNombreCategoria(),
+                categoria.getIdEmpresa().getNombreEmpresa()
+            });
+        }
+    }
+    
+    /**
+     * @return the empresa
+     */
+    public PuntoventaEmpresa getEmpresa() {
+        return empresa;
+    }
+
+    /**
+     * @param empresa the empresa to set
+     */
+    public void setEmpresa(PuntoventaEmpresa empresa) {
+        this.empresa = empresa;
+    }
+
+    /**
+     * @return the em
+     */
+    public EntityManager getEm() {
+        return em;
+    }
+
+    /**
+     * @param em the em to set
+     */
+    public void setEm(EntityManager em) {
+        this.em = em;
+    }
+
+    
 }

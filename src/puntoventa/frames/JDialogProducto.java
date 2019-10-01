@@ -6,13 +6,37 @@
 package puntoventa.frames;
 
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import puntodeventa.sql.PuntoventaCategoria;
+import puntodeventa.sql.PuntoventaCategoria_;
+import puntodeventa.sql.PuntoventaCommonObject;
+import puntodeventa.sql.PuntoventaEmpresa;
+import puntodeventa.sql.PuntoventaImagen;
+import puntodeventa.sql.PuntoventaImagen_;
 import puntodeventa.sql.PuntoventaProducto;
+import puntoventa.test.FtpJFrame;
+import puntoventa.test.ImageResizer;
 
 /**
  *
@@ -22,6 +46,9 @@ public class JDialogProducto extends javax.swing.JDialog {
 
     /**
      * Creates new form JDialogProducto
+     *
+     * @param parent
+     * @param modal
      */
     public JDialogProducto(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -37,87 +64,295 @@ public class JDialogProducto extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        canceljButton = new javax.swing.JButton();
-        aceptarjButton = new javax.swing.JButton();
-        codigoBarrasjTextField = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        nombreProductojTextField = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        categoriajComboBox = new javax.swing.JComboBox<>();
-        jLabel4 = new javax.swing.JLabel();
-        precioComprajTextField = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        precioVentajTextField = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        cantidadDisponiblejTextField = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        jLabelTitulo = new javax.swing.JLabel();
+        jPanelProductTextProperties = new javax.swing.JPanel();
+        jLabelCodigoBarras = new javax.swing.JLabel();
+        jTextFieldCodigoBarras = new javax.swing.JTextField();
+        jLabelNombreProducto = new javax.swing.JLabel();
+        jTextFieldNombreProducto = new javax.swing.JTextField();
+        jLabelCategoria = new javax.swing.JLabel();
+        jComboBoxCategoria = new javax.swing.JComboBox<>();
+        jLabelPrecioCompra = new javax.swing.JLabel();
+        jTextFieldPrecioCompra = new javax.swing.JTextField();
+        jLabelPrecioVenta = new javax.swing.JLabel();
+        jTextFieldPrecioVenta = new javax.swing.JTextField();
+        jLabelCantidadDisponible = new javax.swing.JLabel();
+        jTextFieldCantidadDisponible = new javax.swing.JTextField();
+        jLabelEmpresa = new javax.swing.JLabel();
+        jjTextFieldEmpresa = new javax.swing.JTextField();
+        jLabelFechaCreacion = new javax.swing.JLabel();
+        jTextFieldFechaCreacion = new javax.swing.JTextField();
+        jLabelNotas = new javax.swing.JLabel();
+        jPanelProductImageProperties = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jListImages = new javax.swing.JList<>();
+        jButtonLoadImage = new javax.swing.JButton();
+        jButtonRotateImage = new javax.swing.JButton();
+        jButtonDelete = new javax.swing.JButton();
+        jLabelImage = new javax.swing.JLabel();
+        jLabelImageProperties = new javax.swing.JLabel();
+        jPanelOperations = new javax.swing.JPanel();
+        jButtonAceptar = new javax.swing.JButton();
+        jButtonCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                formWindowOpened(evt);
+
+        jLabelTitulo.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLabelTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelTitulo.setText("Producto");
+
+        jPanelProductTextProperties.setBackground(new java.awt.Color(51, 51, 51));
+
+        jLabelCodigoBarras.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabelCodigoBarras.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelCodigoBarras.setText("Código de barras");
+
+        jTextFieldCodigoBarras.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jLabelNombreProducto.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabelNombreProducto.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelNombreProducto.setText("Nombre producto");
+
+        jTextFieldNombreProducto.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jLabelCategoria.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabelCategoria.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelCategoria.setText("Categoría");
+
+        jComboBoxCategoria.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jLabelPrecioCompra.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabelPrecioCompra.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelPrecioCompra.setText("Precio de compra");
+
+        jTextFieldPrecioCompra.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jLabelPrecioVenta.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabelPrecioVenta.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelPrecioVenta.setText("Precio de Venta");
+
+        jTextFieldPrecioVenta.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jLabelCantidadDisponible.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabelCantidadDisponible.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelCantidadDisponible.setText("Cantidad disponible");
+
+        jTextFieldCantidadDisponible.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jLabelEmpresa.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabelEmpresa.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelEmpresa.setText("Empresa");
+
+        jjTextFieldEmpresa.setEditable(false);
+        jjTextFieldEmpresa.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jLabelFechaCreacion.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabelFechaCreacion.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelFechaCreacion.setText("Fecha creacion");
+
+        jTextFieldFechaCreacion.setEditable(false);
+        jTextFieldFechaCreacion.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jLabelNotas.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jLabelNotas.setText("Todos los campos son obligatorios");
+
+        javax.swing.GroupLayout jPanelProductTextPropertiesLayout = new javax.swing.GroupLayout(jPanelProductTextProperties);
+        jPanelProductTextProperties.setLayout(jPanelProductTextPropertiesLayout);
+        jPanelProductTextPropertiesLayout.setHorizontalGroup(
+            jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelProductTextPropertiesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelNotas, javax.swing.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
+                    .addGroup(jPanelProductTextPropertiesLayout.createSequentialGroup()
+                        .addComponent(jLabelCodigoBarras, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldCodigoBarras))
+                    .addGroup(jPanelProductTextPropertiesLayout.createSequentialGroup()
+                        .addComponent(jLabelNombreProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldNombreProducto))
+                    .addGroup(jPanelProductTextPropertiesLayout.createSequentialGroup()
+                        .addComponent(jLabelCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBoxCategoria, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanelProductTextPropertiesLayout.createSequentialGroup()
+                        .addComponent(jLabelPrecioCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldPrecioCompra))
+                    .addGroup(jPanelProductTextPropertiesLayout.createSequentialGroup()
+                        .addComponent(jLabelPrecioVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldPrecioVenta))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelProductTextPropertiesLayout.createSequentialGroup()
+                        .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabelEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabelCantidadDisponible, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabelFechaCreacion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jjTextFieldEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
+                            .addComponent(jTextFieldFechaCreacion)
+                            .addComponent(jTextFieldCantidadDisponible, javax.swing.GroupLayout.Alignment.TRAILING))))
+                .addContainerGap())
+        );
+        jPanelProductTextPropertiesLayout.setVerticalGroup(
+            jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelProductTextPropertiesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelCodigoBarras, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldCodigoBarras, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelNombreProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldNombreProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBoxCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelPrecioCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldPrecioCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelPrecioVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldPrecioVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelCantidadDisponible, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldCantidadDisponible, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jjTextFieldEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelProductTextPropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelFechaCreacion, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldFechaCreacion, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabelNotas)
+                .addContainerGap(115, Short.MAX_VALUE))
+        );
+
+        jPanelProductImageProperties.setBackground(new java.awt.Color(0, 0, 0));
+
+        jListImages.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jListImages.setToolTipText("");
+        jListImages.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jListImagesValueChanged(evt);
             }
         });
+        jScrollPane1.setViewportView(jListImages);
 
-        canceljButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        canceljButton.setText("Cancelar");
-        canceljButton.addActionListener(new java.awt.event.ActionListener() {
+        jButtonLoadImage.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jButtonLoadImage.setText("ADD");
+        jButtonLoadImage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                canceljButtonActionPerformed(evt);
+                jButtonLoadImageActionPerformed(evt);
             }
         });
 
-        aceptarjButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        aceptarjButton.setText("Aceptar");
-        aceptarjButton.addActionListener(new java.awt.event.ActionListener() {
+        jButtonRotateImage.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jButtonRotateImage.setText("ROTATE");
+        jButtonRotateImage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aceptarjButtonActionPerformed(evt);
+                jButtonRotateImageActionPerformed(evt);
             }
         });
 
-        codigoBarrasjTextField.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jButtonDelete.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jButtonDelete.setText("DELETE");
+        jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeleteActionPerformed(evt);
+            }
+        });
 
-        jLabel1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel1.setText("Código de barras");
+        jLabelImage.setBackground(new java.awt.Color(102, 102, 102));
+        jLabelImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelImage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabelImage.setOpaque(true);
 
-        jLabel2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel2.setText("Nombre producto");
+        jLabelImageProperties.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelImageProperties.setText("jLabel1");
 
-        nombreProductojTextField.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        javax.swing.GroupLayout jPanelProductImagePropertiesLayout = new javax.swing.GroupLayout(jPanelProductImageProperties);
+        jPanelProductImageProperties.setLayout(jPanelProductImagePropertiesLayout);
+        jPanelProductImagePropertiesLayout.setHorizontalGroup(
+            jPanelProductImagePropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelProductImagePropertiesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelProductImagePropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabelImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanelProductImagePropertiesLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanelProductImagePropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButtonDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonLoadImage, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonRotateImage, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelImageProperties, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanelProductImagePropertiesLayout.setVerticalGroup(
+            jPanelProductImagePropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelProductImagePropertiesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabelImage, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelProductImagePropertiesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelProductImagePropertiesLayout.createSequentialGroup()
+                        .addComponent(jButtonLoadImage)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonRotateImage)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonDelete))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelImageProperties, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
 
-        jLabel3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel3.setText("Categoría");
+        jButtonAceptar.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jButtonAceptar.setText("Aceptar");
+        jButtonAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAceptarActionPerformed(evt);
+            }
+        });
 
-        categoriajComboBox.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jButtonCancelar.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jButtonCancelar.setText("Cancelar");
+        jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCancelarActionPerformed(evt);
+            }
+        });
 
-        jLabel4.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel4.setText("Precio de compra");
-
-        precioComprajTextField.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-
-        jLabel5.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel5.setText("Precio de Venta");
-
-        precioVentajTextField.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-
-        jLabel6.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel6.setText("Cantidad disponible");
-
-        cantidadDisponiblejTextField.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-
-        jLabel7.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(153, 0, 0));
-        jLabel7.setText("* Todos los campos son obligatorios");
-
-        jLabel8.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setText("Producto");
+        javax.swing.GroupLayout jPanelOperationsLayout = new javax.swing.GroupLayout(jPanelOperations);
+        jPanelOperations.setLayout(jPanelOperationsLayout);
+        jPanelOperationsLayout.setHorizontalGroup(
+            jPanelOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelOperationsLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanelOperationsLayout.setVerticalGroup(
+            jPanelOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelOperationsLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanelOperationsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -126,126 +361,194 @@ public class JDialogProducto extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanelOperations, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanelProductTextProperties, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(categoriajComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(nombreProductojTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(codigoBarrasjTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(precioComprajTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(precioVentajTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cantidadDisponiblejTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(94, 94, 94)
-                        .addComponent(aceptarjButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(canceljButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanelProductImageProperties, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(codigoBarrasjTextField)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabelTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(nombreProductojTextField)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(categoriajComboBox)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(precioComprajTextField)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(precioVentajTextField)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cantidadDisponiblejTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(aceptarjButton, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
-                    .addComponent(canceljButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanelProductTextProperties, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelProductImageProperties, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanelOperations, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void aceptarjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarjButtonActionPerformed
+    private void jButtonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAceptarActionPerformed
 
-        if (validacion()) {
-            puntoventaProducto.setIdCodigoBarra(codigoBarrasjTextField.getText());
-            puntoventaProducto.setNombreProducto(nombreProductojTextField.getText());
+        jDialogActionCrearEditar();
+    }//GEN-LAST:event_jButtonAceptarActionPerformed
 
-            TypedQuery<PuntoventaCategoria> typedQuery;
-            typedQuery = em.createNamedQuery(
-                    "PuntoventaCategoria.findByNombreCategoria", PuntoventaCategoria.class);
-            typedQuery.setParameter("nombreCategoria", categoriajComboBox.getSelectedItem().toString());
+    private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
+
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        setCancelado(true);
+    }//GEN-LAST:event_jButtonCancelarActionPerformed
+
+    private void jButtonLoadImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoadImageActionPerformed
+
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "JPG & GIF Images", "jpg", "gif", "png");
+
+        chooser.setFileFilter(filter);
+
+        int returnVal = chooser.showOpenDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
 
             try {
 
-                PuntoventaCategoria categoria = typedQuery.getSingleResult();
-                puntoventaProducto.setIdCategoria(categoria);
-            } catch (NoResultException noResultException) {
+                String path = chooser.getSelectedFile().getAbsolutePath();
+                String fileName = assignImageName();
+                BufferedImage inputImage = ImageResizer.loadImageToBuffer(path);
+                BufferedImage outputImage;
+                int labelHeight = 350;
+                int imageHeight = inputImage.getHeight();
+                int imageWidth = inputImage.getWidth();
+                
+                if ( imageWidth > imageHeight  ) {
+                    
+                    int tmp = imageWidth;
+                    imageWidth = imageHeight;
+                    imageHeight = tmp;
+                    int relativeWidth = ImageResizer.calculateRelativeWidthToHeight(imageHeight, imageWidth, labelHeight);
+                    outputImage = ImageResizer.resize(inputImage,labelHeight, relativeWidth );
+                } else {
+                    
+                    int relativeWidth = ImageResizer.calculateRelativeWidthToHeight(imageHeight, imageWidth, labelHeight);
+                    outputImage = ImageResizer.resize(inputImage, relativeWidth, labelHeight);
+                }
+                
+                
+                ImageResizer.loadImageOnLabel(outputImage, jLabelImage);
+                ImageResizer.publishImageLength(outputImage, jLabelImageProperties);
+                ImageResizer.createLocalDirectory("cache");
+                ImageResizer.publishImageOnLocal(outputImage, "cache\\" + fileName);
 
-                JOptionPane.showMessageDialog(this,
-                        "No se encontró la categoría seleccionada. Consulte al administrador del sistema. \nError: "
-                        + noResultException.getMessage());
+                //List<PuntoventaImagen> listaImagenes = getListImagesFromJList(jListImages);
+                PuntoventaImagen newImage = new PuntoventaImagen();
+                newImage.setPath("/puntoventa/images/" + fileName);
+                //listaImagenes.add(newImage);
+               // setImagesOnList(listaImagenes, jListImages);
+               ((DefaultListModel) jListImages.getModel()).addElement(newImage);
+               jListImages.setSelectedIndex(jListImages.getModel().getSize()-1);
+
+            } catch (IOException ex) {
+
+                Logger.getLogger(FtpJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jButtonLoadImageActionPerformed
+
+    private void jButtonRotateImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRotateImageActionPerformed
+
+        if (jListImages.getModel().getSize() > 0) {
+            
+
+            try {
+
+                BufferedImage imputImage = ImageResizer.loadIconToBuffer(jLabelImage.getIcon());
+                BufferedImage outputImage = ImageResizer.rotateImage(imputImage);
+                ImageResizer.loadImageOnLabel(outputImage, jLabelImage);
+                ImageResizer.publishImageLength(outputImage, jLabelImageProperties);
+                ImageResizer.createLocalDirectory("cache");
+                ImageResizer.publishImageOnLocal(outputImage, "cache\\" + jListImages.getSelectedValue());
+
+            } catch (IOException ex) {
+                Logger.getLogger(FtpJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Se presentó un error al cargar la imagen:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No se ha cargado alguna imagen todavía", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonRotateImageActionPerformed
+
+    private void jListImagesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListImagesValueChanged
+
+        if (!evt.getValueIsAdjusting()) {
+
+            if (jListImages.getSelectedValue() != null) {
+
+                try {
+                    
+                    String path = "cache\\" + jListImages.getSelectedValue();
+                    System.out.println(path);
+                    BufferedImage imputImage = ImageResizer.loadImageToBuffer(path);
+                    ImageResizer.loadImageOnLabel(imputImage, jLabelImage);
+                    ImageResizer.publishImageLength(ImageResizer.loadIconToBuffer(jLabelImage.getIcon()), jLabelImageProperties);
+                    
+                } catch (IOException ex) {
+                    
+                    Logger.getLogger(JDialogProducto.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(this, "Se presentó un error al cargar la imagen:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    }//GEN-LAST:event_jListImagesValueChanged
+
+    private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
+
+        if (jListImages.getModel().getSize() > 0) {
+
+            int respuesta = JOptionPane.showConfirmDialog(this,
+                    "¿Esta seguto de eliminar?\nAl confirmar no será posible revertir los cambios",
+                    "Advertencia", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (respuesta == JOptionPane.YES_OPTION) {
+                Properties properties = ImageResizer.readFilePropeties("ftpProperties.properties");
+                String ftpServer = properties.getProperty("server");
+                String ftpUser = properties.getProperty("user");
+                String ftpPassword = properties.getProperty("password");
+
+                ImageResizer.deleteFileFromServer(ftpServer, ftpUser, ftpPassword, jListImages.getSelectedValue().getPath());
+                ImageResizer.deleteFileLocal("cache\\" + jListImages.getSelectedValue());
+                jLabelImage.setIcon(null);
+
+                try {
+                    em.getTransaction().begin();
+
+                    em.remove(jListImages.getSelectedValue());
+                    em.getTransaction().commit();
+
+                } catch (Exception exception) {
+
+                    try {
+                        em.getTransaction().rollback();
+                    } catch (Exception exception1) {
+                        System.out.println("No es posible hacer rollback en este punto :" + exception1.getMessage());
+                    }
+
+                    System.out.println(exception.getMessage());
+
+                }
+
+                ((DefaultListModel) jListImages.getModel()).remove(jListImages.getSelectedIndex());
+
+                if (jListImages.getModel().getSize() > 0) {
+                    jListImages.setSelectedIndex(jListImages.getModel().getSize() - 1);
+                }
+
+                //setImagesOnList(getListOfImagesFromCommonObject(puntoventaProducto.getIdCommonObject()), jListImages);
             }
 
-            puntoventaProducto.setPrecioCompra(Double.parseDouble(precioComprajTextField.getText()));
-            puntoventaProducto.setPrecioVenta(Double.parseDouble(precioVentajTextField.getText()));
-            puntoventaProducto.setCantidadDisponible(Double.parseDouble(cantidadDisponiblejTextField.getText()));
+        } else {
 
-            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-            cancelado = false;
+            JOptionPane.showMessageDialog(this, "No se ha cargado alguna imagen todavía", "Info", JOptionPane.INFORMATION_MESSAGE);
         }
-    }//GEN-LAST:event_aceptarjButtonActionPerformed
-
-    private void canceljButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_canceljButtonActionPerformed
-
-        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        cancelado = true;
-    }//GEN-LAST:event_canceljButtonActionPerformed
-
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-
-        cancelado = true;
-    }//GEN-LAST:event_formWindowClosing
-
-    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-
-        customInit();
-
-        if (editar) {
-
-            editInit();
-        }
-    }//GEN-LAST:event_formWindowOpened
+    }//GEN-LAST:event_jButtonDeleteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -276,6 +579,7 @@ public class JDialogProducto extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 JDialogProducto dialog = new JDialogProducto(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -289,109 +593,282 @@ public class JDialogProducto extends javax.swing.JDialog {
         });
     }
 
-    // Custom methods
-    private void customInit() {
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAceptar;
+    private javax.swing.JButton jButtonCancelar;
+    private javax.swing.JButton jButtonDelete;
+    private javax.swing.JButton jButtonLoadImage;
+    private javax.swing.JButton jButtonRotateImage;
+    private javax.swing.JComboBox<String> jComboBoxCategoria;
+    private javax.swing.JLabel jLabelCantidadDisponible;
+    private javax.swing.JLabel jLabelCategoria;
+    private javax.swing.JLabel jLabelCodigoBarras;
+    private javax.swing.JLabel jLabelEmpresa;
+    private javax.swing.JLabel jLabelFechaCreacion;
+    private javax.swing.JLabel jLabelImage;
+    private javax.swing.JLabel jLabelImageProperties;
+    private javax.swing.JLabel jLabelNombreProducto;
+    private javax.swing.JLabel jLabelNotas;
+    private javax.swing.JLabel jLabelPrecioCompra;
+    private javax.swing.JLabel jLabelPrecioVenta;
+    private javax.swing.JLabel jLabelTitulo;
+    private javax.swing.JList<PuntoventaImagen> jListImages;
+    private javax.swing.JPanel jPanelOperations;
+    private javax.swing.JPanel jPanelProductImageProperties;
+    private javax.swing.JPanel jPanelProductTextProperties;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jTextFieldCantidadDisponible;
+    private javax.swing.JTextField jTextFieldCodigoBarras;
+    private javax.swing.JTextField jTextFieldFechaCreacion;
+    private javax.swing.JTextField jTextFieldNombreProducto;
+    private javax.swing.JTextField jTextFieldPrecioCompra;
+    private javax.swing.JTextField jTextFieldPrecioVenta;
+    private javax.swing.JTextField jjTextFieldEmpresa;
+    // End of variables declaration//GEN-END:variables
 
-        categoriajComboBox.removeAllItems();
+    // Custom variables
+    private boolean cancelado;
+    private boolean modoEdicion;
+    private PuntoventaProducto puntoventaProducto;
+    private EntityManager em;
+    private PuntoventaEmpresa empresa;
+    private PuntoventaCategoria categoria;
 
-        TypedQuery<PuntoventaCategoria> typedQuery;
-        typedQuery = em.createNamedQuery(
-                "PuntoventaCategoria.findAll", PuntoventaCategoria.class);
-        List<PuntoventaCategoria> listaCategorias = typedQuery.getResultList();
+    private void jDialogActionCrearEditar() {
 
-        for (PuntoventaCategoria categoria : listaCategorias) {
+        String codigoBarras = jTextFieldCodigoBarras.getText();
+        String nombreProducto = jTextFieldNombreProducto.getText();
+        PuntoventaCategoria selectedCategotia = (PuntoventaCategoria) jComboBoxCategoria.getSelectedItem();
+        String precioCompra = jTextFieldPrecioCompra.getText();
+        String precioVenta = jTextFieldPrecioVenta.getText();
+        String cantidadDisponible = jTextFieldCantidadDisponible.getText();
+        PuntoventaEmpresa selectedEmpresa = getEmpresa();
 
-            categoriajComboBox.addItem(categoria.getNombreCategoria());
+        if (validarDatos(codigoBarras, nombreProducto, precioCompra, precioVenta, cantidadDisponible, selectedCategotia)) {
+
+            if (!isModoEdicion()) {
+                boolean productoCreado = crearNuevoProducto(codigoBarras, nombreProducto, precioCompra, precioVenta, cantidadDisponible, selectedCategotia, selectedEmpresa, getListImagesFromJList(jListImages), new Date());
+                if (productoCreado) {
+
+                    JOptionPane.showMessageDialog(this, "¡Operación realizada exitosamente!.", "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+                    this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+                    this.setCancelado(false);
+                } else {
+
+                    JOptionPane.showMessageDialog(this, "Sucedió un error, Intente nuevamente", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+
+                boolean resultado = modificarProducto(codigoBarras, nombreProducto, precioCompra, precioVenta, cantidadDisponible, selectedCategotia, selectedEmpresa, puntoventaProducto, getListImagesFromJList(jListImages));
+                if (resultado) {
+
+                    JOptionPane.showMessageDialog(this, "¡Modificación exitosa!.", "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+                    this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+                    this.setCancelado(false);
+                } else {
+
+                    JOptionPane.showMessageDialog(this, "Sucedió un error, Intente nuevamente", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+        } else {
+
+            JOptionPane.showMessageDialog(this, "Por favor ingrese los campos obligatorios y valide su información.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        categoriajComboBox.setSelectedItem("");
     }
 
-    private void editInit() {
+    public void UploadImagesOnServer(List<PuntoventaImagen> imagenes) {
 
-        // llenar campos con valores del objecto Producto
-        codigoBarrasjTextField.setText(puntoventaProducto.getIdCodigoBarra());
-        nombreProductojTextField.setText(puntoventaProducto.getNombreProducto());
+        Properties properties = ImageResizer.readFilePropeties("ftpProperties.properties");
+        String ftpServer = properties.getProperty("server");
+        String ftpUser = properties.getProperty("user");
+        String ftpPassword = properties.getProperty("password");
 
-        categoriajComboBox.setSelectedItem(puntoventaProducto.getIdCategoria().getNombreCategoria());
+        for (PuntoventaImagen imagen : imagenes) {
 
-        precioComprajTextField.setText(puntoventaProducto.getPrecioCompra().toString());
-        precioVentajTextField.setText(puntoventaProducto.getPrecioVenta().toString());
-        cantidadDisponiblejTextField.setText(puntoventaProducto.getCantidadDisponible().toString());
+            String localPath = "cache\\" + imagen.toString();
+            ImageResizer.publishImageOnServer(localPath, ftpServer, ftpUser, ftpPassword, imagen.getPath());
+        }
     }
 
-    private boolean validacion() {
+    private List<PuntoventaCategoria> selectCategoriasEmpresa(PuntoventaEmpresa empresa) {
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<PuntoventaCategoria> cq = cb.createQuery(PuntoventaCategoria.class);
+        Root<PuntoventaCategoria> categoriasEmpresa = cq.from(PuntoventaCategoria.class);
+
+        cq.where(cb.equal(categoriasEmpresa.get(PuntoventaCategoria_.idEmpresa), empresa));
+        cq.select(categoriasEmpresa);
+
+        TypedQuery<PuntoventaCategoria> q = em.createQuery(cq);
+
+        List<PuntoventaCategoria> listaItems = q.getResultList();
+        return listaItems;
+    }
+
+    private void mostrarCategoriasCombo(List<PuntoventaCategoria> categorias, JComboBox combo) {
+
+        for (PuntoventaCategoria categoriaFor : categorias) {
+
+            combo.addItem(categoriaFor);
+        }
+        combo.addItem(null);
+        combo.setSelectedItem("");
+    }
+
+    // Custom methods
+    public void inicializar() {
+
+        jComboBoxCategoria.removeAllItems();
+        mostrarCategoriasCombo(selectCategoriasEmpresa(getEmpresa()), jComboBoxCategoria);
+        jjTextFieldEmpresa.setText(getEmpresa().getNombreEmpresa());
+        
+    }
+
+    private boolean validarDatos(String codigoBarras, String nombreProducto, String precioCompra, String precioVenta, String cantidadDisponible, PuntoventaCategoria categoria) {
 
         boolean pasaValidacion = true;
 
         // campos vacios
-        if (nombreProductojTextField.getText().equals("")
-                | codigoBarrasjTextField.getText().equals("")
-                | categoriajComboBox.getSelectedItem().toString().equals("")
-                | precioComprajTextField.getText().equals("")
-                | precioVentajTextField.getText().equals("")
-                | cantidadDisponiblejTextField.getText().equals("")) {
+        if (nombreProducto.equals("")
+                | codigoBarras.equals("")
+                | precioCompra.equals("")
+                | precioVenta.equals("")
+                | cantidadDisponible.equals("")
+                | categoria == null) {
 
-            JOptionPane.showMessageDialog(this, "Existen datos obligatorios vacios. Ingrese todos los datos por favor.");
             return false;
         }
 
         // digitos
         try {
 
-            Double.parseDouble(precioComprajTextField.getText());
-            Double.parseDouble(precioVentajTextField.getText());
-            Double.parseDouble(cantidadDisponiblejTextField.getText());
+            Double.parseDouble(precioCompra);
+            Double.parseDouble(precioVenta);
+            Double.parseDouble(cantidadDisponible);
         } catch (NumberFormatException numberFormatException) {
 
-            JOptionPane.showMessageDialog(this, "El formato de precio es inválido. Por favor ingrese unicamente dígitos.");
             return false;
         }
-
-        // duplicado
-        if (!editar) {
-            TypedQuery<PuntoventaProducto> typedQuery;
-            typedQuery = em.createNamedQuery(
-                    "PuntoventaProducto.findByNombreProducto", PuntoventaProducto.class);
-            typedQuery.setParameter("nombreProducto", nombreProductojTextField.getText());
-
-            try {
-
-                typedQuery.getSingleResult();
-                JOptionPane.showMessageDialog(this, "Ya existe un producto con el nombre que intenta utilizar. Por favor ingrese un nombre diferente.");
-                return false;
-            } catch (NoResultException noResultException) {
-
-            }
-        }
-
         return pasaValidacion;
     }
 
-    // Custom variables
-    private boolean cancelado;
-    private boolean editar;
-    private PuntoventaProducto puntoventaProducto;
-    private EntityManager em;
+    private boolean crearNuevoProducto(String codigoBarras, String nombreProducto, String precioCompra, String precioVenta, String cantidadDisponible, PuntoventaCategoria categoria, PuntoventaEmpresa empresa, List<PuntoventaImagen> imagenes, Date fechaCreacion) {
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton aceptarjButton;
-    private javax.swing.JButton canceljButton;
-    private javax.swing.JTextField cantidadDisponiblejTextField;
-    private javax.swing.JComboBox<String> categoriajComboBox;
-    private javax.swing.JTextField codigoBarrasjTextField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JTextField nombreProductojTextField;
-    private javax.swing.JTextField precioComprajTextField;
-    private javax.swing.JTextField precioVentajTextField;
-    // End of variables declaration//GEN-END:variables
+        try {
+            em.getTransaction().begin();
+
+            PuntoventaProducto nuevoProducto = new PuntoventaProducto();
+            PuntoventaCommonObject commonObject = new PuntoventaCommonObject();
+
+            nuevoProducto.setIdCodigoBarra(codigoBarras);
+            nuevoProducto.setNombreProducto(nombreProducto);
+            nuevoProducto.setPrecioCompra(Double.valueOf(precioCompra));
+            nuevoProducto.setPrecioVenta(Double.valueOf(precioVenta));
+            nuevoProducto.setCantidadDisponible(Double.valueOf(cantidadDisponible));
+            nuevoProducto.setIdCategoria(categoria);
+            nuevoProducto.setIdEmpresa(empresa);
+            nuevoProducto.setFechaCreacion(fechaCreacion);
+            commonObject.setFechaCreacion(new Date());
+            em.persist(commonObject);
+            //commonObject.setPuntoventaImagenList(imagenes);
+            for (PuntoventaImagen image : imagenes) {
+                image.setIdCommonObject(commonObject);
+                em.persist(image);
+            }
+
+            nuevoProducto.setIdCommonObject(commonObject);
+
+            em.persist(nuevoProducto);
+            em.getTransaction().commit();
+
+            UploadImagesOnServer(imagenes);
+
+            return true;
+        } catch (Exception exception) {
+
+            System.out.println(exception.getMessage());
+
+            try {
+
+                em.getTransaction().rollback();
+            } catch (Exception exception1) {
+
+                System.out.println("No es posible hacer rollback en este punto");
+            }
+            return false;
+        }
+
+    }
+
+    private boolean modificarProducto(String codigoBarras, String nombreProducto, String precioCompra, String precioVenta, String cantidadDisponible, PuntoventaCategoria categoria, PuntoventaEmpresa empresa, PuntoventaProducto productoEditado, List<PuntoventaImagen> imagenes) {
+
+        try {
+            em.getTransaction().begin();
+
+            productoEditado.setIdCodigoBarra(codigoBarras);
+            productoEditado.setNombreProducto(nombreProducto);
+            productoEditado.setPrecioCompra(Double.valueOf(precioCompra));
+            productoEditado.setPrecioVenta(Double.valueOf(precioVenta));
+            productoEditado.setCantidadDisponible(Double.valueOf(cantidadDisponible));
+            productoEditado.setIdCategoria(categoria);
+            productoEditado.setIdEmpresa(empresa);
+
+            PuntoventaCommonObject commonObject = new PuntoventaCommonObject();
+
+            if (productoEditado.getIdCommonObject() != null) {
+
+                //productoEditado.getIdCommonObject().setPuntoventaImagenList(imagenes);
+                for (PuntoventaImagen image : imagenes) {
+                    image.setIdCommonObject(productoEditado.getIdCommonObject());
+                    em.persist(image);
+                }
+            } else {
+
+                commonObject.setFechaCreacion(new Date());
+                em.persist(commonObject);
+                //commonObject.setPuntoventaImagenList(imagenes);
+                for (PuntoventaImagen image : imagenes) {
+                    image.setIdCommonObject(commonObject);
+                    em.persist(image);
+                }
+
+                productoEditado.setIdCommonObject(commonObject);
+            }
+
+            em.persist(productoEditado);
+            em.getTransaction().commit();
+
+            UploadImagesOnServer(imagenes);
+
+            return true;
+        } catch (Exception exception) {
+
+            System.out.println(exception.getMessage());
+            try {
+
+                em.getTransaction().rollback();
+            } catch (Exception exception1) {
+
+                System.out.println("No es posible hacer rollback en este punto");
+            }
+            return false;
+        }
+    }
+
+    public String fechaATexto(Date fecha, String formato) {
+
+        DateFormat format = new SimpleDateFormat(formato);
+
+        String dateFormat = "";
+
+        if (fecha != null) {
+            dateFormat = format.format(fecha);
+        }
+
+        return dateFormat;
+    }
 
     /**
      * @return the cancelado
@@ -401,17 +878,162 @@ public class JDialogProducto extends javax.swing.JDialog {
     }
 
     /**
-     * @param editar the editar to set
+     * @param modoEdicion the modoEdicion to set
      */
-    public void setEditar(boolean editar) {
-        this.editar = editar;
+    public void setModoEdicion(boolean modoEdicion) {
+        this.modoEdicion = modoEdicion;
     }
 
     /**
      * @param puntoventaProducto the puntoventaProducto to set
      */
     public void setPuntoventaProducto(PuntoventaProducto puntoventaProducto) {
+
         this.puntoventaProducto = puntoventaProducto;
+        jTextFieldCodigoBarras.setText(puntoventaProducto.getIdCodigoBarra());
+        jTextFieldNombreProducto.setText(puntoventaProducto.getNombreProducto());
+        jComboBoxCategoria.setSelectedItem(puntoventaProducto.getIdCategoria());
+        jTextFieldPrecioCompra.setText(puntoventaProducto.getPrecioCompra().toString());
+        jTextFieldPrecioVenta.setText(puntoventaProducto.getPrecioVenta().toString());
+        jTextFieldCantidadDisponible.setText(puntoventaProducto.getCantidadDisponible().toString());
+        jjTextFieldEmpresa.setText(getEmpresa().getNombreEmpresa());
+        jTextFieldFechaCreacion.setText(fechaATexto(puntoventaProducto.getFechaCreacion(), "dd/MM/yyyy HH:mm:ss"));
+        System.out.println("Cargando lista e imagenes ...");
+        downloadImagesOnLocal(getListOfImagesFromCommonObject(puntoventaProducto.getIdCommonObject()));
+        setImagesOnList(getListOfImagesFromCommonObject(puntoventaProducto.getIdCommonObject()), jListImages);
+
+    }
+
+    public void downloadImagesOnLocal(List<PuntoventaImagen> listaImagenes) {
+
+        Properties properties = ImageResizer.readFilePropeties("ftpProperties.properties");
+        String ftpServer = properties.getProperty("server");
+        String ftpUser = properties.getProperty("user");
+        String ftpPassword = properties.getProperty("password");
+
+        for (PuntoventaImagen image : listaImagenes) {
+
+            String localPath = "cache\\" + image;
+            if ( !ImageResizer.fileExists(localPath) )
+                ImageResizer.retriveFileFromServer(localPath, ftpServer, ftpUser, ftpPassword, image.getPath());
+        }
+    }
+
+    public List<PuntoventaImagen> getListOfImagesFromCommonObject(PuntoventaCommonObject commonObject) {
+
+        List<PuntoventaImagen> listaImagenes = new ArrayList<>();
+
+        if (commonObject != null) {
+            //listaImagenes = commonObject.getPuntoventaImagenList();
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<PuntoventaImagen> cq = cb.createQuery(PuntoventaImagen.class);
+            Root<PuntoventaImagen> imagenesObjecto = cq.from(PuntoventaImagen.class);
+
+            cq.where(cb.equal(imagenesObjecto.get(PuntoventaImagen_.idCommonObject), commonObject));
+
+            cq.select(imagenesObjecto);
+
+            TypedQuery<PuntoventaImagen> q = em.createQuery(cq);
+
+            listaImagenes = q.getResultList();
+
+            System.out.println("Se obtuvieron las imagenes con éxito");
+        }
+
+        return listaImagenes;
+    }
+
+    public void setImagesOnList(List<PuntoventaImagen> listaImagenes, JList<PuntoventaImagen> lista) {
+
+        DefaultListModel listModel = new DefaultListModel<>();
+        lista.setModel(listModel);
+        listModel.removeAllElements();
+
+        if (listaImagenes != null) {
+
+            for (PuntoventaImagen imagen : listaImagenes) {
+
+                listModel.addElement(imagen);
+                System.out.println("Imagen " + imagen + " cargada con éxito");
+
+            }
+            lista.setSelectedIndex(listaImagenes.size() - 1);
+        }
+    }
+
+    public List<PuntoventaImagen> getListImagesFromJList(JList<PuntoventaImagen> lista) {
+
+        List<PuntoventaImagen> listaImagenes = new ArrayList<>();
+
+        for (int i = 0; i < lista.getModel().getSize(); i++) {
+
+            listaImagenes.add(lista.getModel().getElementAt(i));
+        }
+
+        return listaImagenes;
+    }
+
+    public void downoladAndLoadImageOnLabel(PuntoventaImagen image, JLabel label) {
+
+        Properties properties = ImageResizer.readFilePropeties("ftpProperties.properties");
+        String ftpServer = properties.getProperty("server");
+        String ftpUser = properties.getProperty("user");
+        String ftpPassword = properties.getProperty("password");
+        String fileName = image.toString();
+        String fullLocalPath = "cache\\" + fileName;
+
+        boolean success;
+
+        success = ImageResizer.createLocalDirectory("cache\\");
+
+        if (success) {
+            success = ImageResizer.retriveFileFromServer(fullLocalPath, ftpServer, ftpUser, ftpPassword, image.getPath());
+        }
+
+        if (success) {
+            try {
+                ImageResizer.loadImageOnLabel(ImageResizer.loadImageToBuffer(fullLocalPath), label);
+            } catch (IOException ex) {
+                Logger.getLogger(JDialogProducto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public PuntoventaCommonObject createCommonObject(EntityManager em) {
+
+        PuntoventaCommonObject commonObject;
+
+        try {
+            em.getTransaction().begin();
+            commonObject = new PuntoventaCommonObject();
+            em.persist(commonObject);
+            em.getTransaction().commit();
+
+            return commonObject;
+        } catch (Exception exception) {
+
+            System.out.println("Ocurrió un error: +" + exception.getMessage());
+            try {
+
+                em.getTransaction().rollback();
+
+            } catch (Exception exception1) {
+
+                System.out.println("No es posible hacer rollback en este punto: " + exception1.getMessage());
+            }
+            return null;
+        }
+    }
+
+    public String assignImageName() {
+
+        String imageName = "";
+
+        Date date = new Date();
+
+        imageName = "IMG-" + fechaATexto(date, "yyyyMMdd-HHmmss") + ".jpg";
+
+        return imageName;
     }
 
     /**
@@ -419,5 +1041,47 @@ public class JDialogProducto extends javax.swing.JDialog {
      */
     public void setEm(EntityManager em) {
         this.em = em;
+    }
+
+    /**
+     * @return the empresa
+     */
+    public PuntoventaEmpresa getEmpresa() {
+        return empresa;
+    }
+
+    /**
+     * @param empresa the empresa to set
+     */
+    public void setEmpresa(PuntoventaEmpresa empresa) {
+        this.empresa = empresa;
+    }
+
+    /**
+     * @return the categoria
+     */
+    public PuntoventaCategoria getCategoria() {
+        return categoria;
+    }
+
+    /**
+     * @param categoria the categoria to set
+     */
+    public void setCategoria(PuntoventaCategoria categoria) {
+        this.categoria = categoria;
+    }
+
+    /**
+     * @return the modoEdicion
+     */
+    public boolean isModoEdicion() {
+        return modoEdicion;
+    }
+
+    /**
+     * @param cancelado the cancelado to set
+     */
+    public void setCancelado(boolean cancelado) {
+        this.cancelado = cancelado;
     }
 }

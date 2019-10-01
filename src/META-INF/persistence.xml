@@ -8,8 +8,14 @@
     <class>puntodeventa.sql.PuntoventaCategoria</class>
     <class>puntodeventa.PuntoventaCorteCaja</class>
     <class>puntodeventa.sql.PuntoventaGrupo</class>
+    <class>puntodeventa.sql.PuntoventaEmpresa</class>
+    <class>puntodeventa.sql.AuthUser</class>
+    <class>puntodeventa.sql.PuntoventaUsuario</class>
+    <class>puntodeventa.sql.PuntoventaEmpresaUsuario</class>
+    <class>puntodeventa.sql.PuntoventaCommonObject</class>
+    <class>puntodeventa.sql.PuntoventaImagen</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://samy-latitud:3306/PUNTOVENTA_20170805?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/PUNTOVENTA_V16?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="PUNTOVENTA"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="PUNTOVENTA"/>

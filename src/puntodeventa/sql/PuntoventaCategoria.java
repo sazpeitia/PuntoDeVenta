@@ -35,6 +35,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "PuntoventaCategoria.findByNombreCategoria", query = "SELECT p FROM PuntoventaCategoria p WHERE p.nombreCategoria = :nombreCategoria")})
 public class PuntoventaCategoria implements Serializable {
 
+    @JoinColumn(name = "ID_EMPRESA", referencedColumnName = "ID_EMPRESA")
+    @ManyToOne
+    private PuntoventaEmpresa idEmpresa;
+    
+    
     @JoinColumn(name = "ID_GRUPO", referencedColumnName = "ID_GRUPO")
     @ManyToOne
     private PuntoventaGrupo idGrupo;
@@ -143,6 +148,20 @@ public class PuntoventaCategoria implements Serializable {
 
     public void setIdGrupo(PuntoventaGrupo idGrupo) {
         this.idGrupo = idGrupo;
+    }
+
+    /**
+     * @return the idEmpresa
+     */
+    public PuntoventaEmpresa getIdEmpresa() {
+        return idEmpresa;
+    }
+
+    /**
+     * @param idEmpresa the idEmpresa to set
+     */
+    public void setIdEmpresa(PuntoventaEmpresa idEmpresa) {
+        this.idEmpresa = idEmpresa;
     }
     
 }

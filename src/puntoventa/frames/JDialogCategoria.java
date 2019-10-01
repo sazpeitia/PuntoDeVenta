@@ -8,10 +8,16 @@ package puntoventa.frames;
 import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import puntodeventa.sql.PuntoventaCategoria;
+import puntodeventa.sql.PuntoventaCategoria_;
+import puntodeventa.sql.PuntoventaEmpresa;
+import puntodeventa.sql.PuntoventaProducto;
 
 /**
  *
@@ -19,14 +25,10 @@ import puntodeventa.sql.PuntoventaCategoria;
  */
 public class JDialogCategoria extends javax.swing.JDialog {
 
-    private PuntoventaCategoria categoria;
-    private List<PuntoventaCategoria> listaCategorias;
-    private EntityManager em;
-    private boolean canceled;
-    private boolean editing;
-
     /**
      * Creates new form CategoriaJDialog
+     * @param parent
+     * @param modal
      */
     public JDialogCategoria(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -42,58 +44,63 @@ public class JDialogCategoria extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
-        cancelarjButton = new javax.swing.JButton();
-        nombreCategoriajTextField = new javax.swing.JTextField();
-        idCategoriajLabel = new javax.swing.JLabel();
-        categoriaPadrejComboBox = new javax.swing.JComboBox<>();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jButtonAceptar = new javax.swing.JButton();
+        jButtonCancelar = new javax.swing.JButton();
+        jTextFieldNombreCategoria = new javax.swing.JTextField();
+        jComboBoxCategoriaPadre = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        jTextFieldNENombreCategoria = new javax.swing.JTextField();
+        jTextFieldNECategoriaPadre = new javax.swing.JTextField();
+        jTextFieldNEEmpresa = new javax.swing.JTextField();
+        jTextFieldEmpresa = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("CATEGORIA");
         setResizable(false);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                formWindowOpened(evt);
-            }
-        });
 
-        jButton1.setText("OK");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonAceptar.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jButtonAceptar.setText("ACEPTAR");
+        jButtonAceptar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonAceptarActionPerformed(evt);
             }
         });
 
-        cancelarjButton.setText("Cancelar");
-        cancelarjButton.addActionListener(new java.awt.event.ActionListener() {
+        jButtonCancelar.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jButtonCancelar.setText("CANCELAR");
+        jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelarjButtonActionPerformed(evt);
+                jButtonCancelarActionPerformed(evt);
             }
         });
 
-        idCategoriajLabel.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        idCategoriajLabel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jTextFieldNombreCategoria.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
 
-        categoriaPadrejComboBox.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jComboBoxCategoriaPadre.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
 
-        jLabel1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel1.setText("Nombre categoría:");
-
-        jLabel2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel2.setText("Categoría padre:");
-
+        jLabel3.setBackground(new java.awt.Color(204, 204, 204));
         jLabel3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("CATEGORÍA");
+        jLabel3.setOpaque(true);
 
-        jLabel4.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel4.setText("ID Categoría:");
+        jTextFieldNENombreCategoria.setEditable(false);
+        jTextFieldNENombreCategoria.setFont(new java.awt.Font("Arial", 1, 15)); // NOI18N
+        jTextFieldNENombreCategoria.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldNENombreCategoria.setText("NOMBRE CATEGORIA");
+
+        jTextFieldNECategoriaPadre.setEditable(false);
+        jTextFieldNECategoriaPadre.setFont(new java.awt.Font("Arial", 1, 15)); // NOI18N
+        jTextFieldNECategoriaPadre.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldNECategoriaPadre.setText("CATEGORIA PADRE");
+
+        jTextFieldNEEmpresa.setEditable(false);
+        jTextFieldNEEmpresa.setFont(new java.awt.Font("Arial", 1, 15)); // NOI18N
+        jTextFieldNEEmpresa.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldNEEmpresa.setText("EMPRESA");
+
+        jTextFieldEmpresa.setEditable(false);
+        jTextFieldEmpresa.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -102,135 +109,61 @@ public class JDialogCategoria extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(categoriaPadrejComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(108, 221, Short.MAX_VALUE))
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(nombreCategoriajTextField)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jTextFieldNEEmpresa, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextFieldNENombreCategoria, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                            .addComponent(jTextFieldNECategoriaPadre, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jComboBoxCategoriaPadre, javax.swing.GroupLayout.Alignment.TRAILING, 0, 304, Short.MAX_VALUE)
+                            .addComponent(jTextFieldNombreCategoria, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jTextFieldEmpresa)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cancelarjButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(idCategoriajLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel4))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(jLabel4)
+                .addContainerGap()
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(62, 62, 62)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jTextFieldNombreCategoria, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                    .addComponent(jTextFieldNENombreCategoria))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(idCategoriajLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldNECategoriaPadre, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBoxCategoriaPadre, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nombreCategoriajTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(categoriaPadrejComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(69, 69, 69)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-                    .addComponent(cancelarjButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jTextFieldNEEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                    .addComponent(jTextFieldEmpresa))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 80, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
-        String categoriaField = nombreCategoriajTextField.getText();
-
-        if (!categoriaField.equals("")) {
-
-            // Validar que no se repita el nombre de categoría
-            TypedQuery<PuntoventaCategoria> typedQuery;
-            typedQuery = em.createNamedQuery(
-                    "PuntoventaCategoria.findByNombreCategoria", PuntoventaCategoria.class);
-            typedQuery.setParameter("nombreCategoria", categoriaField);
-            boolean categoriaRepetida;
-
-            PuntoventaCategoria categoriaAValidar = null;
-            try {
-
-                categoriaAValidar = typedQuery.getSingleResult();
-                categoriaRepetida = true;
-
-            } catch (NoResultException noResultException) {
-
-                categoriaAValidar = null;
-                categoriaRepetida = false;
-            }
-
-            if (!categoriaRepetida || editing ) {
-                
-
-                String idCategoriaString = idCategoriajLabel.getText();
-
-                if (!idCategoriaString.equals("")) {
-                    categoria.setIdCategoria(Integer.parseInt(idCategoriaString));
-                }
-                categoria.setNombreCategoria(categoriaField);
-
-                typedQuery = em.createNamedQuery(
-                        "PuntoventaCategoria.findByNombreCategoria", PuntoventaCategoria.class);
-                typedQuery.setParameter("nombreCategoria", categoriaPadrejComboBox.getSelectedItem());
-
-                PuntoventaCategoria categoriaPadre = null;
-                try {
-
-                    categoriaPadre = typedQuery.getSingleResult();
-                } catch (NoResultException noResultException) {
-
-                    categoriaPadre = null;
-                }
-
-                categoria.setIdCategoriaPadre(categoriaPadre);
-
-                this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-                canceled = false;
-            } else {
-
-                JOptionPane.showMessageDialog(this, "La categoría que trata de ingresar ya existe. Ingrese un nombre diferente.");
-            }
-        } else {
-
-            JOptionPane.showMessageDialog(this, "Debe ingresar el nombre de alguna categoría.");
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void cancelarjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarjButtonActionPerformed
-
-        canceled = true;
+    private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
+        
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        canceled = true;
-    }//GEN-LAST:event_cancelarjButtonActionPerformed
+        setCancelado(true);
+    }//GEN-LAST:event_jButtonCancelarActionPerformed
 
-    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-
-        idCategoriajLabel.setText(categoria.getIdCategoria() != null ? String.valueOf(categoria.getIdCategoria()) : "");
-        nombreCategoriajTextField.setText(categoria.getNombreCategoria());
-        setValuesJComboBox();
-        categoriaPadrejComboBox.setSelectedItem(categoria.getIdCategoriaPadre() != null
-                ? categoria.getIdCategoriaPadre().getNombreCategoria() : ""
-        );
-    }//GEN-LAST:event_formWindowOpened
-
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-
-       canceled = true;
-    }//GEN-LAST:event_formWindowClosing
+    private void jButtonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAceptarActionPerformed
+        
+        jDialogActionCrearEditar();
+    }//GEN-LAST:event_jButtonAceptarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -262,6 +195,7 @@ public class JDialogCategoria extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 JDialogCategoria dialog = new JDialogCategoria(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -276,42 +210,170 @@ public class JDialogCategoria extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelarjButton;
-    private javax.swing.JComboBox<String> categoriaPadrejComboBox;
-    private javax.swing.JLabel idCategoriajLabel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton jButtonAceptar;
+    private javax.swing.JButton jButtonCancelar;
+    private javax.swing.JComboBox<String> jComboBoxCategoriaPadre;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JTextField nombreCategoriajTextField;
+    private javax.swing.JTextField jTextFieldEmpresa;
+    private javax.swing.JTextField jTextFieldNECategoriaPadre;
+    private javax.swing.JTextField jTextFieldNEEmpresa;
+    private javax.swing.JTextField jTextFieldNENombreCategoria;
+    private javax.swing.JTextField jTextFieldNombreCategoria;
     // End of variables declaration//GEN-END:variables
 
+    private boolean cancelado;
+    private boolean modoEdicion;
+    private EntityManager em;
+    private PuntoventaEmpresa empresa;
+    private PuntoventaCategoria categoria;
+    
+    private void jDialogActionCrearEditar(){
+        
+        String nombreCategoria = jTextFieldNombreCategoria.getText();
+        PuntoventaCategoria categoriaPadre = (PuntoventaCategoria) jComboBoxCategoriaPadre.getSelectedItem();
+        PuntoventaEmpresa selectedEmpresa = getEmpresa();
+        PuntoventaCategoria selectedCategoria = getCategoria();
+        
+        if (validarDatos(nombreCategoria, categoriaPadre, selectedEmpresa)){
+
+            if (!isModoEdicion()) {
+                boolean operacionExitosa = crearNuevaCategoria(nombreCategoria, categoriaPadre, selectedEmpresa);
+                if (operacionExitosa) {
+
+                    JOptionPane.showMessageDialog(this, "¡Operación realizada exitosamente!.", "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+                    this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+                    this.setCancelado(false);
+                } else {
+
+                    JOptionPane.showMessageDialog(this, "Sucedió un error, Intente nuevamente", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+
+                boolean operacionExitosa = modificarCategoria(nombreCategoria, categoriaPadre, selectedEmpresa, selectedCategoria );
+                if (operacionExitosa) {
+
+                    JOptionPane.showMessageDialog(this, "¡Modificación exitosa!.", "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+                    this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+                    this.setCancelado(false);
+                } else {
+
+                    JOptionPane.showMessageDialog(this, "Sucedió un error, Intente nuevamente", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+        } else {
+
+            JOptionPane.showMessageDialog(this, "Por favor ingrese los campos obligatorios y valide su información.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public void inicializar() {
+
+        jComboBoxCategoriaPadre.removeAllItems();
+        mostrarCategoriasEnCombo(selectCategoriasEmpresa(getEmpresa()), jComboBoxCategoriaPadre);
+        jTextFieldEmpresa.setText(getEmpresa().getNombreEmpresa());
+    }
+    
+    private boolean validarDatos(String nombreCategoria, PuntoventaCategoria categoriaPadre, PuntoventaEmpresa empresa) {
+        
+        return !nombreCategoria.equals("");
+    }
+    
+    private boolean crearNuevaCategoria(String nombreCategoria, PuntoventaCategoria categoriaPadre, PuntoventaEmpresa empresa) {
+        
+        try {
+            em.getTransaction().begin();
+
+            PuntoventaCategoria nuevaCategoria = new PuntoventaCategoria();
+            
+            nuevaCategoria.setNombreCategoria(nombreCategoria);
+            nuevaCategoria.setIdCategoriaPadre(categoriaPadre);
+            nuevaCategoria.setIdEmpresa(empresa);
+
+            em.persist(nuevaCategoria);
+            em.getTransaction().commit();
+
+            return true;
+        } catch (Exception exception) {
+
+            System.out.println(exception.getMessage());
+
+            try {
+
+                em.getTransaction().rollback();
+            } catch (Exception exception1) {
+
+                System.out.println("No es posible hacer rollback en este punto");
+            }
+            return false;
+        }
+    }
+    
+    private boolean modificarCategoria(String nombreCategoria, PuntoventaCategoria categoriaPadre, PuntoventaEmpresa empresa, PuntoventaCategoria categoriaEditada ) {
+        
+        try {
+            em.getTransaction().begin();
+
+            categoriaEditada.setNombreCategoria(nombreCategoria);
+            categoriaEditada.setIdCategoriaPadre(categoriaPadre);
+            categoriaEditada.setIdEmpresa(empresa);
+
+            em.persist(categoriaEditada);
+            em.getTransaction().commit();
+            return true;
+            
+        } catch (Exception exception) {
+
+            System.out.println(exception.getMessage());
+            try {
+
+                em.getTransaction().rollback();
+            } catch (Exception exception1) {
+
+                System.out.println("No es posible hacer rollback en este punto");
+            }
+            return false;
+        }
+    }
+    
+    private List<PuntoventaCategoria> selectCategoriasEmpresa( PuntoventaEmpresa empresa ){
+        
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<PuntoventaCategoria> cq = cb.createQuery(PuntoventaCategoria.class);
+        Root<PuntoventaCategoria> categoriasEmpresa = cq.from(PuntoventaCategoria.class);
+
+        cq.where(cb.equal(categoriasEmpresa.get(PuntoventaCategoria_.idEmpresa), empresa));
+        cq.select(categoriasEmpresa);
+
+        TypedQuery<PuntoventaCategoria> q = em.createQuery(cq);
+    
+        List<PuntoventaCategoria> listaItems = q.getResultList();
+        return listaItems;
+    }
+    
+    private void mostrarCategoriasEnCombo( List<PuntoventaCategoria> categorias, JComboBox combo ){
+        
+
+        for (PuntoventaCategoria categoriaFor : categorias) {
+
+            combo.addItem(categoriaFor);
+        }
+        
+        combo.addItem(null);
+    }
+    
     void setCategoria(PuntoventaCategoria categoriaSeleccionada) {
 
         this.categoria = categoriaSeleccionada;
+        
+        jTextFieldNombreCategoria.setText(categoriaSeleccionada.getNombreCategoria());
+        jComboBoxCategoriaPadre.setSelectedItem(categoriaSeleccionada.getIdCategoriaPadre());
+        jTextFieldEmpresa.setText(categoriaSeleccionada.getIdEmpresa().getNombreEmpresa());
     }
 
     public PuntoventaCategoria getCategoria() {
         return categoria;
-    }
-
-    private void setValuesJComboBox() {
-
-        List<PuntoventaCategoria> listaCategoriasTmp = listaCategorias;
-
-        for (PuntoventaCategoria categoria : listaCategoriasTmp) {
-            categoriaPadrejComboBox.addItem(categoria.getNombreCategoria());
-        }
-
-        categoriaPadrejComboBox.addItem("");
-    }
-
-    /**
-     * @param listaCategorias the listaCategorias to set
-     */
-    public void setListaCategorias(List<PuntoventaCategoria> listaCategorias) {
-        this.listaCategorias = listaCategorias;
     }
 
     /**
@@ -322,16 +384,44 @@ public class JDialogCategoria extends javax.swing.JDialog {
     }
 
     /**
-     * @return the canceled
+     * @return the empresa
      */
-    public boolean isCanceled() {
-        return canceled;
+    public PuntoventaEmpresa getEmpresa() {
+        return empresa;
     }
 
     /**
-     * @param editing the editing to set
+     * @param empresa the empresa to set
      */
-    public void setEditing(boolean editing) {
-        this.editing = editing;
+    public void setEmpresa(PuntoventaEmpresa empresa) {
+        this.empresa = empresa;
+    }
+
+    /**
+     * @return the cancelado
+     */
+    public boolean isCancelado() {
+        return cancelado;
+    }
+
+    /**
+     * @param cancelado the cancelado to set
+     */
+    public void setCancelado(boolean cancelado) {
+        this.cancelado = cancelado;
+    }
+
+    /**
+     * @return the modoEdicion
+     */
+    public boolean isModoEdicion() {
+        return modoEdicion;
+    }
+
+    /**
+     * @param modoEdicion the modoEdicion to set
+     */
+    public void setModoEdicion(boolean modoEdicion) {
+        this.modoEdicion = modoEdicion;
     }
 }

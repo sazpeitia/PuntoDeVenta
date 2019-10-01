@@ -5,15 +5,26 @@
  */
 package puntoventa.frames;
 
+import java.awt.Font;
 import java.awt.event.WindowEvent;
-import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
-import puntodeventa.sql.PuntoventaCarrito;
-import puntodeventa.sql.PuntoventaVenta;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import puntodeventa.PuntoventaCorteCaja;
+import puntodeventa.PuntoventaCorteCaja_;
+import puntodeventa.sql.PuntoventaEmpresa;
+import puntodeventa.sql.PuntoventaUsuario;
 
 /**
  *
@@ -23,6 +34,8 @@ public class JDialogReporteGanancias extends javax.swing.JDialog {
 
     /**
      * Creates new form JDialogReporteGanancias
+     * @param parent
+     * @param modal
      */
     public JDialogReporteGanancias(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -39,20 +52,27 @@ public class JDialogReporteGanancias extends javax.swing.JDialog {
     private void initComponents() {
 
         tituloJLabel = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        reporteJTextPane = new javax.swing.JTextPane();
         cerrarVentanaJButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableReporteGanancias = new javax.swing.JTable();
+        jTextFieldContado = new javax.swing.JTextField();
+        jTextFieldCalculado = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jSpinnerFechaInicio = new javax.swing.JSpinner();
+        jLabel2 = new javax.swing.JLabel();
+        jSpinnerFechaFin = new javax.swing.JSpinner();
+        jButtonConsultar = new javax.swing.JButton();
+        jTextFieldRetirado = new javax.swing.JTextField();
+        jTextFieldEnCaja = new javax.swing.JTextField();
+        jTextFieldVentas = new javax.swing.JTextField();
+        jTextFieldCaja = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         tituloJLabel.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         tituloJLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        tituloJLabel.setText("GANANCIAS");
-
-        reporteJTextPane.setEditable(false);
-        reporteJTextPane.setContentType("text/html"); // NOI18N
-        reporteJTextPane.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jScrollPane1.setViewportView(reporteJTextPane);
+        tituloJLabel.setText("INGRESOS");
 
         cerrarVentanaJButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         cerrarVentanaJButton.setText("Cerrar ventana");
@@ -62,6 +82,124 @@ public class JDialogReporteGanancias extends javax.swing.JDialog {
             }
         });
 
+        jTableReporteGanancias.setAutoCreateRowSorter(true);
+        jTableReporteGanancias.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jTableReporteGanancias.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "FECHA", "TOTAL CONTADO", "TOTAL CALCULADO", "TOTAL RETIRADO"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableReporteGanancias.setRowHeight(30);
+        jScrollPane1.setViewportView(jTableReporteGanancias);
+
+        jTextFieldContado.setFont(new java.awt.Font("Consolas", 0, 18)); // NOI18N
+        jTextFieldContado.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldContado.setText("TOTAL CONTADO: $10.00");
+
+        jTextFieldCalculado.setFont(new java.awt.Font("Consolas", 0, 18)); // NOI18N
+        jTextFieldCalculado.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldCalculado.setText("TOTAL CALCULADO: $10.00");
+
+        jPanel1.setBackground(new java.awt.Color(153, 153, 153));
+
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 15)); // NOI18N
+        jLabel1.setText("FECHA INICIO:");
+        jLabel1.setToolTipText("");
+        jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+
+        jSpinnerFechaInicio.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jSpinnerFechaInicio.setModel(new javax.swing.SpinnerDateModel());
+
+        jLabel2.setFont(new java.awt.Font("Arial", 1, 15)); // NOI18N
+        jLabel2.setText("FECHA FIN:");
+        jLabel2.setToolTipText("");
+        jLabel2.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+
+        jSpinnerFechaFin.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jSpinnerFechaFin.setModel(new javax.swing.SpinnerDateModel());
+
+        jButtonConsultar.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jButtonConsultar.setText("CONSULTAR");
+        jButtonConsultar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonConsultarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSpinnerFechaInicio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jSpinnerFechaFin)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonConsultar, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jSpinnerFechaInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSpinnerFechaFin, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jButtonConsultar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        jTextFieldRetirado.setFont(new java.awt.Font("Consolas", 0, 18)); // NOI18N
+        jTextFieldRetirado.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldRetirado.setText("TOTAL RETIRADO: $10.00");
+
+        jTextFieldEnCaja.setFont(new java.awt.Font("Consolas", 0, 18)); // NOI18N
+        jTextFieldEnCaja.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldEnCaja.setText("TOTAL EN CAJA: $10.00");
+
+        jTextFieldVentas.setBackground(new java.awt.Color(204, 204, 204));
+        jTextFieldVentas.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
+        jTextFieldVentas.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldVentas.setText("TOTAL VENTAS");
+
+        jTextFieldCaja.setBackground(new java.awt.Color(204, 204, 204));
+        jTextFieldCaja.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
+        jTextFieldCaja.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldCaja.setText("TOTAL CAJA");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -69,11 +207,18 @@ public class JDialogReporteGanancias extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tituloJLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
+                    .addComponent(tituloJLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(cerrarVentanaJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cerrarVentanaJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1)
+                    .addComponent(jTextFieldContado)
+                    .addComponent(jTextFieldCalculado)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextFieldRetirado)
+                    .addComponent(jTextFieldEnCaja)
+                    .addComponent(jTextFieldVentas)
+                    .addComponent(jTextFieldCaja, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -81,9 +226,23 @@ public class JDialogReporteGanancias extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(tituloJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextFieldVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextFieldContado, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextFieldCalculado, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextFieldCaja, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextFieldRetirado, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextFieldEnCaja, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cerrarVentanaJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -95,6 +254,26 @@ public class JDialogReporteGanancias extends javax.swing.JDialog {
 
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_cerrarVentanaJButtonActionPerformed
+
+    private void jButtonConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarActionPerformed
+        
+        Date fechaInicio = (Date)jSpinnerFechaInicio.getValue();
+        Date fechaFin = (Date)jSpinnerFechaFin.getValue();
+        
+        eliminarTodasFilasTabla(jTableReporteGanancias);
+        
+        mostrarCortesEnTabla(
+                jTableReporteGanancias, 
+                jTextFieldContado, 
+                jTextFieldCalculado, 
+                jTextFieldRetirado,
+                jTextFieldEnCaja,
+                selectCortesCajaEmpresasBetweenDates(
+                        getEmpresa(), 
+                        fechaInicio, 
+                        fechaFin)
+        );
+    }//GEN-LAST:event_jButtonConsultarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -125,6 +304,7 @@ public class JDialogReporteGanancias extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 JDialogReporteGanancias dialog = new JDialogReporteGanancias(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -141,75 +321,132 @@ public class JDialogReporteGanancias extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cerrarVentanaJButton;
+    private javax.swing.JButton jButtonConsultar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextPane reporteJTextPane;
+    private javax.swing.JSpinner jSpinnerFechaFin;
+    private javax.swing.JSpinner jSpinnerFechaInicio;
+    private javax.swing.JTable jTableReporteGanancias;
+    private javax.swing.JTextField jTextFieldCaja;
+    private javax.swing.JTextField jTextFieldCalculado;
+    private javax.swing.JTextField jTextFieldContado;
+    private javax.swing.JTextField jTextFieldEnCaja;
+    private javax.swing.JTextField jTextFieldRetirado;
+    private javax.swing.JTextField jTextFieldVentas;
     private javax.swing.JLabel tituloJLabel;
     // End of variables declaration//GEN-END:variables
 
-    private EntityManagerFactory emf;
     private EntityManager em;
-    private List<PuntoventaVenta> listaObjectos;
-
+    private PuntoventaEmpresa empresa;
+    private PuntoventaUsuario usuario;
     
-    public void customInit() {
-
-        obtenerObjetos();
-        mostrarContenidoHTML();
+    public void inicializar(){
+        
+        eliminarTodasFilasTabla(jTableReporteGanancias);
+        cambiarFuenteTabla(jTableReporteGanancias, new Font("Arial", Font.PLAIN, 15));
+        
+        Calendar ahora = Calendar.getInstance();
+        Date fechaFin = ahora.getTime();
+        ahora.set(Calendar.HOUR_OF_DAY, 0);
+        ahora.set(Calendar.MINUTE, 0);
+        ahora.set(Calendar.SECOND, 0);
+        ahora.set(Calendar.MILLISECOND, 0);
+        ahora.set(Calendar.DAY_OF_MONTH, 1);
+        Date fechaInicio = ahora.getTime();
+        jSpinnerFechaInicio.setValue(fechaInicio);
+        jSpinnerFechaFin.setValue(fechaFin);
+        mostrarCortesEnTabla(jTableReporteGanancias, 
+                jTextFieldContado,
+                jTextFieldCalculado,
+                jTextFieldRetirado,
+                jTextFieldEnCaja,
+                selectCortesCajaEmpresasBetweenDates(
+                        getEmpresa(), 
+                        fechaInicio, 
+                        fechaFin)
+        );
     }
     
-    private void obtenerObjetos() {
-        
-        TypedQuery<PuntoventaVenta> typedQuery;
-        typedQuery = em.createNamedQuery("PuntoventaVenta.findAll", PuntoventaVenta.class);
-        listaObjectos = typedQuery.getResultList();
-    }
+    private void mostrarCortesEnTabla(JTable tabla, JTextField subtotalContadoTextField, JTextField subtotalCalculadoTextField, JTextField subtotalRetiradoTextField, JTextField subtotalEnCajaTextField , List<PuntoventaCorteCaja> cortes) {
 
-    private void mostrarContenidoHTML() {
-        
-        reporteJTextPane.setText("");
-        
-        String htmlTextBegin = "<html><body>";
-        String htmlBodyTableHeader = "<table border=\"3\" style=\"width:100%\"><tr>"
-                + "<td>Fecha de Venta</td><td>Total de Venta</td><td>Ganancia</td></tr>";
-        String htmlBodyTableContent = "";
-        String htmlTextEnd = "</body></html>";
-        
-        
-        for ( PuntoventaVenta venta : listaObjectos ) {
-            
-            String totalVenta = String.format("$%.2f", venta.getTotalVenta() );
-            DateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-            String fechaFormat = formato.format(venta.getFechaVenta());
-            Double sumaGanancia = 0.0;
-            
-            
-            List<PuntoventaCarrito> carrito = venta.getPuntoventaCarritoList();
-            
-            for ( PuntoventaCarrito item : carrito ) {
-                
-                Double totalPrecioVenta = item.getCantidadProducto() * item.getIdProducto().getPrecioVenta();
-                
-                Double totalPrecioCompra = item.getCantidadProducto() * item.getIdProducto().getPrecioCompra();
-                sumaGanancia += (totalPrecioVenta - totalPrecioCompra);
-            }
-            
-            String totalGanancia = String.format("$%.2f", sumaGanancia );
-            
-            htmlBodyTableContent += "<tr><td>" + fechaFormat + "</td>";
-            htmlBodyTableContent += "<td>" + totalVenta + "</td>";
-            htmlBodyTableContent += "<td>" + totalGanancia + "</td></tr>";
+        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
+        Double subtotalContadoDouble = 0.0;
+        Double subtotalCalculadoDouble = 0.0;
+        Double subtotalRetiradoDouble = 0.0;
+        Double subtotalCajaDouble = 0.0;
+
+        for (PuntoventaCorteCaja corte : cortes) {
+            modelo.addRow(new Object[]{
+                dateFormat.format(corte.getFechaCorte()),
+                String.format("$%s", decimalFormat.format(corte.getTotalReal())),
+                String.format("$%s", decimalFormat.format(corte.getTotalRecaudado())),
+                String.format("$%s", decimalFormat.format(corte.getRetiroCaja()))
+            });
+            subtotalContadoDouble += corte.getTotalReal();
+            subtotalCalculadoDouble += corte.getTotalRecaudado();
+            subtotalRetiradoDouble += corte.getRetiroCaja();
         }
         
-        htmlBodyTableContent += "</table>";
+        subtotalCajaDouble = subtotalContadoDouble - subtotalRetiradoDouble;
         
-        reporteJTextPane.setText(htmlTextBegin + htmlBodyTableHeader + htmlBodyTableContent + htmlTextEnd);
+        subtotalContadoTextField.setText(String.format("TOTAL CONTADO: $%s", decimalFormat.format(subtotalContadoDouble)));
+        subtotalCalculadoTextField.setText(String.format("TOTAL CALCULADO: $%s", decimalFormat.format(subtotalCalculadoDouble)));
+        subtotalRetiradoTextField.setText(String.format("TOTAL RETIRADO: $%s", decimalFormat.format(subtotalRetiradoDouble)));
+        subtotalEnCajaTextField.setText(String.format("TOTAL EN CAJA: $%s", decimalFormat.format(subtotalCajaDouble)));
+    }
+    
+    private List<PuntoventaCorteCaja> selectCortesCajaEmpresasBetweenDates( PuntoventaEmpresa empresa, Date fechaInicio, Date fechaFin ) {
+        
+        CriteriaBuilder cb = getEm().getCriteriaBuilder();
+            
+        CriteriaQuery<PuntoventaCorteCaja> cq = cb.createQuery(PuntoventaCorteCaja.class);
+        Root<PuntoventaCorteCaja> cortes = cq.from(PuntoventaCorteCaja.class);
+  
+        cq.where(
+                cb.and(
+                    cb.between(
+                            cortes.get(
+                                    PuntoventaCorteCaja_.fechaCorte),
+                            fechaInicio, 
+                            fechaFin),
+                    cb.equal(
+                             cortes.get(
+                                    PuntoventaCorteCaja_.idEmpresa),
+                            empresa
+                    )
+            )
+        );
+        cq.select(cortes);
+
+        TypedQuery<PuntoventaCorteCaja> q = getEm().createQuery(cq);
+        List<PuntoventaCorteCaja> listaCortes = q.getResultList();
+        return listaCortes;
     }
 
+    private void eliminarTodasFilasTabla(JTable tabla) {
+
+        DefaultTableModel dm = (DefaultTableModel) tabla.getModel();
+        int rowCount = dm.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            dm.removeRow(i);
+        }
+    }
+    
+    private void cambiarFuenteTabla(JTable tabla, Font fuente) {
+
+        JTableHeader header = tabla.getTableHeader();
+        header.setFont(fuente);
+    }
+    
     /**
-     * @param emf the emf to set
+     * @return the em
      */
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+    public EntityManager getEm() {
+        return em;
     }
 
     /**
@@ -217,5 +454,33 @@ public class JDialogReporteGanancias extends javax.swing.JDialog {
      */
     public void setEm(EntityManager em) {
         this.em = em;
+    }
+
+    /**
+     * @return the empresa
+     */
+    public PuntoventaEmpresa getEmpresa() {
+        return empresa;
+    }
+
+    /**
+     * @param empresa the empresa to set
+     */
+    public void setEmpresa(PuntoventaEmpresa empresa) {
+        this.empresa = empresa;
+    }
+
+    /**
+     * @return the usuario
+     */
+    public PuntoventaUsuario getUsuario() {
+        return usuario;
+    }
+
+    /**
+     * @param usuario the usuario to set
+     */
+    public void setUsuario(PuntoventaUsuario usuario) {
+        this.usuario = usuario;
     }
 }

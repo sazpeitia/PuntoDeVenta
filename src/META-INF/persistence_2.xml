@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+    <persistence-unit name="PuntoDeVentaPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>puntodeventa.sql.PuntoventaCarrito</class>
+        <class>puntodeventa.sql.PuntoventaProducto</class>
+        <class>puntodeventa.sql.PuntoventaVenta</class>
+        <class>puntodeventa.sql.PuntoventaCategoria</class>
+        <class>puntodeventa.PuntoventaCorteCaja</class>
+        <class>puntodeventa.sql.PuntoventaGrupo</class>
+        <class>puntodeventa.sql.PuntoventaEmpresa</class>
+        <class>puntodeventa.sql.AuthUser</class>
+        <class>puntodeventa.sql.PuntoventaUsuario</class>
+        <class>puntodeventa.sql.PuntoventaEmpresaUsuario</class>
+        <properties>
+            <properties>
+                <property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC" />
+                <property name="javax.persistence.jdbc.url" value="jdbc:sqlite:C:\sqllitledb\PUNTOVENTA_AUTO.db" />
+                <property name="eclipselink.ddl-generation" value="create-tables" />
+                <property name="eclipselink.ddl-generation.output-mode" value="database" />
+            </properties>
+        </properties>
+    </persistence-unit>
+</persistence>

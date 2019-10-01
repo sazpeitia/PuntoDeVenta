@@ -5,32 +5,40 @@
  */
 package puntoventa.frames;
 
+import java.awt.Font;
 import java.awt.event.WindowEvent;
-import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import puntodeventa.PuntoVentaPrinter;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import puntodeventa.PuntoventaCorteCaja;
+import puntodeventa.sql.PuntoventaEmpresa;
+import puntodeventa.sql.PuntoventaUsuario;
 import puntodeventa.sql.PuntoventaVenta;
+import puntodeventa.sql.PuntoventaVenta_;
 
 /**
  *
  * @author SERVIDOR-PC
  */
-public class JDialogReporteVentas extends javax.swing.JDialog {
+public class JDialogReporteVentas extends javax.swing.JFrame {
 
-    /**
-     * Creates new form ReporteVentasJDialog
-     */
+
     public JDialogReporteVentas(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+        
         initComponents();
     }
 
@@ -43,12 +51,25 @@ public class JDialogReporteVentas extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         cerrarVentanaJButton = new javax.swing.JButton();
-        hacerCorteJButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
+        fechaInicioSpinner = new javax.swing.JSpinner();
+        fechaFinSpinner = new javax.swing.JSpinner();
+        jButtonQueryReport = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jButtonVerDetalle = new javax.swing.JButton();
+        jButtonHoy = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        reporteVentasJTextPane = new javax.swing.JTextPane();
+        jTableVentas = new javax.swing.JTable();
+        jButtonHacerCorteCaja = new javax.swing.JButton();
+        jButton1DeseleccionarTodo = new javax.swing.JButton();
+        jButton2SeleccionarTodo = new javax.swing.JButton();
+        jTextFieldTotal = new javax.swing.JTextField();
+
+        jLabel4.setText("jLabel4");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -61,62 +82,179 @@ public class JDialogReporteVentas extends javax.swing.JDialog {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("REPORTE DE VENTAS");
 
-        cerrarVentanaJButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        cerrarVentanaJButton.setText("Cerrar ventana");
+        cerrarVentanaJButton.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        cerrarVentanaJButton.setText("CERRAR");
         cerrarVentanaJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cerrarVentanaJButtonActionPerformed(evt);
             }
         });
 
-        hacerCorteJButton.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        hacerCorteJButton.setText("Hacer corte");
-        hacerCorteJButton.addActionListener(new java.awt.event.ActionListener() {
+        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setAutoscrolls(true);
+
+        fechaInicioSpinner.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        fechaInicioSpinner.setModel(new javax.swing.SpinnerDateModel());
+
+        fechaFinSpinner.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        fechaFinSpinner.setModel(new javax.swing.SpinnerDateModel());
+
+        jButtonQueryReport.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jButtonQueryReport.setText("CONSULTAR");
+        jButtonQueryReport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hacerCorteJButtonActionPerformed(evt);
+                jButtonQueryReportActionPerformed(evt);
             }
         });
 
-        jPanel1.setAutoscrolls(true);
+        jLabel2.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jLabel2.setText("FECHA INICIO");
 
-        reporteVentasJTextPane.setEditable(false);
-        reporteVentasJTextPane.setContentType("text/html"); // NOI18N
-        reporteVentasJTextPane.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jScrollPane1.setViewportView(reporteVentasJTextPane);
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jLabel3.setText("FECHA FIN");
+
+        jButtonVerDetalle.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jButtonVerDetalle.setText("VER DETALLE");
+        jButtonVerDetalle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonVerDetalleActionPerformed(evt);
+            }
+        });
+
+        jButtonHoy.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jButtonHoy.setText("HOY");
+        jButtonHoy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonHoyActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+                .addGap(20, 20, 20)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(fechaInicioSpinner))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(fechaFinSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 114, Short.MAX_VALUE))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonQueryReport, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonHoy, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonVerDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(11, 11, 11))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                .addGap(15, 15, 15)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fechaFinSpinner)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonHoy, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonVerDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fechaInicioSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonQueryReport, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+
+        jTableVentas.setAutoCreateRowSorter(true);
+        jTableVentas.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jTableVentas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "FOLIO VENTA", "FECHA DE VENTA", "TOTAL VENTA", "CORTE", "FOLIO CORTE", "USUARIO", "EMPRESA"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Boolean.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableVentas.setRowHeight(30);
+        jTableVentas.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(jTableVentas);
+
+        jButtonHacerCorteCaja.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        jButtonHacerCorteCaja.setText("CORTE DE CAJA");
+        jButtonHacerCorteCaja.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonHacerCorteCajaActionPerformed(evt);
+            }
+        });
+
+        jButton1DeseleccionarTodo.setText("□");
+        jButton1DeseleccionarTodo.setToolTipText("Deseleccionar todas las ventas");
+        jButton1DeseleccionarTodo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1DeseleccionarTodoActionPerformed(evt);
+            }
+        });
+
+        jButton2SeleccionarTodo.setText("■");
+        jButton2SeleccionarTodo.setToolTipText("Seleccionar todas las ventas");
+        jButton2SeleccionarTodo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2SeleccionarTodoActionPerformed(evt);
+            }
+        });
+
+        jTextFieldTotal.setEditable(false);
+        jTextFieldTotal.setFont(new java.awt.Font("Consolas", 0, 24)); // NOI18N
+        jTextFieldTotal.setText("TOTAL VENTA:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(40, 434, Short.MAX_VALUE)
-                        .addComponent(hacerCorteJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jTextFieldTotal)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2SeleccionarTodo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1DeseleccionarTodo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonHacerCorteCaja, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cerrarVentanaJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -125,11 +263,16 @@ public class JDialogReporteVentas extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(cerrarVentanaJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-                    .addComponent(hacerCorteJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButtonHacerCorteCaja, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton2SeleccionarTodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1DeseleccionarTodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextFieldTotal))
                 .addContainerGap())
         );
 
@@ -146,58 +289,111 @@ public class JDialogReporteVentas extends javax.swing.JDialog {
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_cerrarVentanaJButtonActionPerformed
 
-    private void hacerCorteJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hacerCorteJButtonActionPerformed
+    private void jButtonQueryReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonQueryReportActionPerformed
+        
+        Date fechaInicio = (Date)fechaInicioSpinner.getValue();
+        Date fechaFin = (Date)fechaFinSpinner.getValue();
+        
+        List<PuntoventaVenta> ventas = cargarVentasSQLRangoFechas(fechaInicio, fechaFin);
+        refrescarVentas(ventas);
+        mostrarTotalVentas(calcularTotalSumaVenta(ventas));
+    }//GEN-LAST:event_jButtonQueryReportActionPerformed
 
-        if (listaVenta.size() > 0) {
-            int resultado = JOptionPane.showConfirmDialog(this, "Se realizará el "
-                    + "corte de caja de todas las ventas ¿Desea continuar?");
-            if (resultado == JOptionPane.YES_OPTION) {
-
-                em.getTransaction().begin();
-
-                Date fechaCorte = new Date();
-                PuntoventaCorteCaja corteCaja = new PuntoventaCorteCaja();
-                corteCaja.setFechaCorte(fechaCorte);
-                double sumaTotal = 0.0;
-
-                for (PuntoventaVenta venta : listaVenta) {
-
-                    sumaTotal += venta.getTotalVenta();
-                    venta.setIdCorteCaja(corteCaja);
-                }
-                corteCaja.setTotalRecaudado(sumaTotal);
-
-                em.persist(corteCaja);
-                em.getTransaction().commit();
-
-                
-
-                String formatoMensaje = String.format("Se ha realizado el corte "
-                        + "correctamente. Favor de retirar $%.2f de la caja", sumaTotal);
-                JOptionPane.showMessageDialog(this, formatoMensaje);
-                
-                int resultado2 = JOptionPane.showConfirmDialog(this, "¿Desea guardar el corte de caja en un archivo html? ");
-                
-                if ( resultado2 == JOptionPane.YES_OPTION ) {
-                    
-                    PuntoVentaPrinter impresora = new PuntoVentaPrinter();
-                    Date currentDate = Calendar.getInstance(Locale.getDefault()).getTime();
-                    SimpleDateFormat formato = new SimpleDateFormat("yyyMMdd-hhmmss");
-                    String fechaFile = formato.format(currentDate);
-                    String file = "ReporteVentas" + fechaFile + ".html";
-                    impresora.printHtmlToFile(reporteVentasJTextPane.getText(),file);
-                    
-                    JOptionPane.showMessageDialog(this, "Se ha guardado el archivo html exitosamente. Busque en la carpeta donde esta instalado el punto de venta.");
-                }
-                
-                obtenerVentasDelDia();
-                mostrarListaVentaHtml();
-            }
-        } else {
-
-            JOptionPane.showMessageDialog(this, "No existen ventas para realizar el corte. Favor de verificar.");
+    private void jButtonVerDetalleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerDetalleActionPerformed
+        
+        PuntoventaVenta ventaSeleccionado = obtenerVentaSeleccionado();
+        if (ventaSeleccionado != null) {
+            JDialogDetalleVenta ventaDetalleDialog = new JDialogDetalleVenta(this, true);
+            ventaDetalleDialog.setEm(getEm());
+            ventaDetalleDialog.setVenta(ventaSeleccionado);
+            ventaDetalleDialog.inicializar();
+            ventaDetalleDialog.setLocationRelativeTo(this);
+            ventaDetalleDialog.setVisible(true);
+            ventaDetalleDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+            
         }
-    }//GEN-LAST:event_hacerCorteJButtonActionPerformed
+    }//GEN-LAST:event_jButtonVerDetalleActionPerformed
+
+    private void jButton2SeleccionarTodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2SeleccionarTodoActionPerformed
+        DefaultTableModel dm = (DefaultTableModel) jTableVentas.getModel();
+        int rowCount = dm.getRowCount();
+        
+        for (int i = rowCount - 1; i >= 0; i--) {
+            dm.setValueAt(true, i, 3);
+        }
+    }//GEN-LAST:event_jButton2SeleccionarTodoActionPerformed
+
+    private void jButton1DeseleccionarTodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1DeseleccionarTodoActionPerformed
+        DefaultTableModel dm = (DefaultTableModel) jTableVentas.getModel();
+        int rowCount = dm.getRowCount();
+        
+        for (int i = rowCount - 1; i >= 0; i--) {
+            dm.setValueAt(false, i, 3);
+        }
+    }//GEN-LAST:event_jButton1DeseleccionarTodoActionPerformed
+
+    private void jButtonHacerCorteCajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonHacerCorteCajaActionPerformed
+        
+
+        List<PuntoventaVenta> ventas = obtenerVentasSeleccionadasDeTabla();
+        
+        if ( ventas.size() > 0 & validarVentaSinCorteDeCaja( ventas )  ){
+            
+            double totalVenta = calcularTotalSumaVenta( ventas );
+
+            JFrameCorteCaja dialogoCorteCaja = new JFrameCorteCaja(this, true);
+            dialogoCorteCaja.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+            dialogoCorteCaja.setCalculado(totalVenta);
+            dialogoCorteCaja.setTotalCaja(totalVenta);
+            dialogoCorteCaja.setContado(totalVenta);
+            dialogoCorteCaja.setRetiroCaja(totalVenta);
+            dialogoCorteCaja.setDiferencia(0.0);
+            dialogoCorteCaja.setLocationRelativeTo(this);
+            dialogoCorteCaja.setVisible(true);
+
+            if ( !dialogoCorteCaja.isTransaccionCancelada()  ) {
+
+                try {
+
+                    getEm().getTransaction().begin();
+                    PuntoventaCorteCaja corteCaja = crearNuevoCorteCaja();
+                    corteCaja.setTotalReal(dialogoCorteCaja.getContado());
+                    corteCaja.setTotalRecaudado(totalVenta);
+                    corteCaja.setFechaCorte(dialogoCorteCaja.getFechaCorte());
+                    corteCaja.setRetiroCaja(dialogoCorteCaja.getRetiroCaja());
+                    corteCaja.setIdEmpresa(getEmpresa());
+                    corteCaja.setIdUsuarioCorte(getUsuario());
+                    actualizarCorteCajaVentas(ventas, corteCaja);
+                    getEm().persist(corteCaja);
+                    getEm().getTransaction().commit();
+                    
+                    
+                    
+                    JOptionPane.showMessageDialog(this, "Corte de caja realizado correctamente.");
+                    refrescarVentas(ventas);
+                    mostrarTotalVentas(calcularTotalSumaVenta(ventas));
+
+                } catch ( Exception e ){
+
+                    getEm().getTransaction().rollback();
+                    System.out.println(e);
+                }
+
+            } 
+        } else {
+            
+            JOptionPane.showMessageDialog(this, "No es posible continuar debido a una de las siguientes razones: \n\n"
+                    
+                    + "a) debe seleccionar por lo menos una venta para poder continuar.\n"
+                    + "b) debe seleccionar ventas que no estén asociadas a algún corte de caja."
+            );
+        }
+    }//GEN-LAST:event_jButtonHacerCorteCajaActionPerformed
+
+    private void jButtonHoyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonHoyActionPerformed
+        
+        mostrarVentasDelDia();
+    }//GEN-LAST:event_jButtonHoyActionPerformed
 
     /**
      * @param args the command line arguments
@@ -229,6 +425,7 @@ public class JDialogReporteVentas extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 JDialogReporteVentas dialog = new JDialogReporteVentas(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -242,77 +439,230 @@ public class JDialogReporteVentas extends javax.swing.JDialog {
         });
     }
 
-    // custom methods
-    public void customInit() {
-
-        obtenerVentasDelDia();
-        mostrarListaVentaHtml();
-    }
-
-    private void obtenerVentasDelDia() {
-
-        TypedQuery<PuntoventaVenta> typedQuery;
-        typedQuery = em.createNamedQuery("PuntoventaVenta.findByIdCorteCajaNull", PuntoventaVenta.class);
-
-        // Date timeStamp = Calendar.getInstance().getTime();
-        listaVenta = typedQuery.getResultList();
-    }
-
-    private void mostrarListaVentaHtml() {
-
-        reporteVentasJTextPane.setText("");
-
-        String htmlTextBegin = "<html><body>";
-        String htmlBodyTableHeader = "<table border=\"3\" style=\"width:100%\"><tr>"
-                + "<td>Número de venta</td><td>Fecha</td><td>Total</td>"
-                + "<td>Pago cliente</td><td>Cambio cliente</td></tr>";
-        String htmlBodyTableContent = "";
-        String htmlTextEnd = "</body></html>";
-
-        int row = 1;
-
-        for (PuntoventaVenta venta : listaVenta) {
-
-            String fechaFormat = "";
-            String totalCompraFormat = String.format("$%.2f", venta.getTotalVenta());
-            String pagoClienteFormat = String.format("$%.2f", venta.getPagoVenta());
-            String cambioClienteFormat = String.format("$%.2f", venta.getCambioVenta());
-            DateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-            fechaFormat = formato.format(venta.getFechaVenta());
-            htmlBodyTableContent += "<tr><td>Venta " + row + "</td>";
-            htmlBodyTableContent += "<td>" + fechaFormat + "</td>";
-            htmlBodyTableContent += "<td>" + totalCompraFormat + "</td>";
-            htmlBodyTableContent += "<td>" + pagoClienteFormat + "</td>";
-            htmlBodyTableContent += "<td>" + cambioClienteFormat + "</td></tr>";
-
-            row++;
-        }
-
-        htmlBodyTableContent += "</table>";
-        reporteVentasJTextPane.setText(htmlTextBegin + htmlBodyTableHeader + htmlBodyTableContent + htmlTextEnd);
-    }
-
-    // custom variables
-    private EntityManagerFactory emf;
-    private EntityManager em;
-
-    private List<PuntoventaVenta> listaVenta;
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cerrarVentanaJButton;
-    private javax.swing.JButton hacerCorteJButton;
+    private javax.swing.JSpinner fechaFinSpinner;
+    private javax.swing.JSpinner fechaInicioSpinner;
+    private javax.swing.JButton jButton1DeseleccionarTodo;
+    private javax.swing.JButton jButton2SeleccionarTodo;
+    private javax.swing.JButton jButtonHacerCorteCaja;
+    private javax.swing.JButton jButtonHoy;
+    private javax.swing.JButton jButtonQueryReport;
+    private javax.swing.JButton jButtonVerDetalle;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextPane reporteVentasJTextPane;
+    private javax.swing.JTable jTableVentas;
+    private javax.swing.JTextField jTextFieldTotal;
     // End of variables declaration//GEN-END:variables
 
-    /**
-     * @param emf the emf to set
-     */
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+      // azptec: Custom code
+    private EntityManager em;
+    private PuntoventaEmpresa empresa;
+    private PuntoventaUsuario usuario;
+
+    public void inicializar() {
+
+        mostrarVentasDelDia();
+        Font fuente = new Font("Arial", Font.PLAIN, 15);
+        cambiarFuenteTabla(jTableVentas, fuente);
     }
+    
+    private void mostrarTotalVentas(Double totalVentas) {
+        
+        DecimalFormat formatter = new DecimalFormat("#,###.00");
+        
+        String totalVentasS = String.format("%s$%s",
+                "TOTAL VENTA: ", formatter.format(totalVentas));
+        jTextFieldTotal.setText(totalVentasS);
+    }
+    
+    private void mostrarVentasDelDia(){
+        
+        Calendar ahora = Calendar.getInstance();
+        Date fechaFinReporte = ahora.getTime();
+        ahora.set(Calendar.HOUR_OF_DAY, 0);
+        ahora.set(Calendar.MINUTE, 0);
+        ahora.set(Calendar.SECOND, 0);
+        ahora.set(Calendar.MILLISECOND, 0);
+        Date fechaInicioReporte = ahora.getTime();
+        fechaInicioSpinner.setValue(fechaInicioReporte);
+        fechaFinSpinner.setValue(fechaFinReporte);
+        List<PuntoventaVenta> ventas = cargarVentasSQLRangoFechas(fechaInicioReporte, fechaFinReporte);
+        refrescarVentas(ventas);
+        mostrarTotalVentas(calcularTotalSumaVenta(ventas));
+    }
+
+    private void refrescarVentas(List<PuntoventaVenta> ventas) {
+
+        eliminarFilasVentasJTable();
+
+        for (PuntoventaVenta venta : ventas) {
+
+            adicionarFilaVentasJTable(venta);
+        }
+    }
+
+    private List<PuntoventaVenta> cargarVentasSQL() {
+
+        List<PuntoventaVenta> listaVentas;
+        TypedQuery<PuntoventaVenta> typedQuery;
+        typedQuery = getEm().createNamedQuery(
+                "PuntoventaVenta.findAll", PuntoventaVenta.class);
+        listaVentas = typedQuery.getResultList();
+        return listaVentas;
+    }
+    
+    private List<PuntoventaVenta> cargarVentasSQLRangoFechas(Date fechaInicioReporte, Date FechaFinReporte) {
+
+        CriteriaBuilder cb = getEm().getCriteriaBuilder();
+            
+        CriteriaQuery<PuntoventaVenta> cq = cb.createQuery(PuntoventaVenta.class);
+        Root<PuntoventaVenta> venta = cq.from(PuntoventaVenta.class);
+  
+        cq.where(
+                cb.and(
+                    cb.between(
+                            venta.get(
+                                    PuntoventaVenta_.fechaVenta),
+                            fechaInicioReporte, 
+                            FechaFinReporte),
+                    cb.equal(
+                             venta.get(
+                                    PuntoventaVenta_.idEmpresa),
+                            getEmpresa()
+                    )
+            )
+        );
+        cq.select(venta);
+
+        TypedQuery<PuntoventaVenta> q = getEm().createQuery(cq);
+        List<PuntoventaVenta> listaVentas = q.getResultList();
+        return listaVentas;
+    }
+    
+    private Double calcularTotalSumaVenta(List<PuntoventaVenta> ventas){
+        
+        Double acumulador = 0.0;
+        
+        for ( PuntoventaVenta venta : ventas ){
+            
+            acumulador += venta.getTotalVenta();
+        }
+        
+        return acumulador;
+    }
+
+    private void eliminarFilasVentasJTable() {
+
+        DefaultTableModel dm = (DefaultTableModel) jTableVentas.getModel();
+        int rowCount = dm.getRowCount();
+        //Remove rows one by one from the end of the table
+        for (int i = rowCount - 1; i >= 0; i--) {
+            dm.removeRow(i);
+        }
+    }
+
+    private void adicionarFilaVentasJTable(PuntoventaVenta venta) {
+        
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        
+        PuntoventaCorteCaja corte = venta.getIdCorteCaja();
+        String formatoIDCorte = "NA";
+        if ( corte != null ) {
+            
+            formatoIDCorte = String.format("%05d", corte.getIdCorteCaja());
+        }
+
+        DefaultTableModel modelo = (DefaultTableModel) jTableVentas.getModel();
+        modelo.addRow(new Object[]{
+            venta,
+            format.format(venta.getFechaVenta()),
+            venta.getTotalVenta(),
+            false,
+            formatoIDCorte,
+            venta.getIdUsuarioVenta(),
+            venta.getIdEmpresa()
+        });
+    }
+
+    private PuntoventaVenta obtenerVentaSeleccionado() {
+
+        PuntoventaVenta ventaSeleccionado = null;
+        try {
+
+            int idSelectedRow = jTableVentas.getSelectedRow();
+            Object objectoSeleccionado = jTableVentas.getValueAt(idSelectedRow, 0);   
+            if (objectoSeleccionado instanceof PuntoventaVenta) {
+                ventaSeleccionado = (PuntoventaVenta) objectoSeleccionado;
+            }
+
+        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {
+            JLabel label = new JLabel("Debe seleccionar una venta para ver el detalle.");
+            label.setFont(new Font("Arial", Font.PLAIN, 15));
+            JOptionPane.showMessageDialog(this, label, "Mensaje de validación", JOptionPane.INFORMATION_MESSAGE);
+        } catch ( IndexOutOfBoundsException indexOutOfBoundsException ) {
+            JLabel label = new JLabel("Debe seleccionar una venta para ver el detalle.");
+            label.setFont(new Font("Arial", Font.PLAIN, 15));
+            JOptionPane.showMessageDialog(this, label, "Mensaje de validación", JOptionPane.INFORMATION_MESSAGE);
+        }
+        return ventaSeleccionado;
+    }
+    
+    private boolean validarVentaSinCorteDeCaja(List<PuntoventaVenta> ventas) {
+
+        for ( PuntoventaVenta venta : ventas ) {
+            
+            if ( venta.getIdCorteCaja()!= null )   {
+                
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private List<PuntoventaVenta> obtenerVentasSeleccionadasDeTabla(){
+        List<PuntoventaVenta> ventas = new ArrayList<>();
+        
+        DefaultTableModel model1 = (DefaultTableModel)jTableVentas.getModel();
+        int rowCount = jTableVentas.getRowCount();
+        
+        for ( int i= 0; i < rowCount; i ++ ) {
+            
+            if ( (boolean)model1.getValueAt(i, 3)  ) {
+                ventas.add((PuntoventaVenta) model1.getValueAt(i, 0));
+                System.out.println("Venta: "+ model1.getValueAt(i, 0));
+            }
+        }
+        
+        return ventas;
+    }
+    
+    private void actualizarCorteCajaVentas(List<PuntoventaVenta> ventas, PuntoventaCorteCaja corteCaja) {
+
+        for ( PuntoventaVenta venta : ventas ) {
+
+            venta.setIdCorteCaja(corteCaja);
+        }
+
+    }
+    
+    private PuntoventaCorteCaja crearNuevoCorteCaja() {
+        
+        PuntoventaCorteCaja corteCaja = new PuntoventaCorteCaja();
+        
+        return corteCaja;
+    }
+    
+    public void cambiarFuenteTabla(JTable tabla, Font fuente) {
+        
+        JTableHeader header = tabla.getTableHeader();
+        header.setFont(fuente);
+    }
+
 
     /**
      * @param em the em to set
@@ -320,4 +670,41 @@ public class JDialogReporteVentas extends javax.swing.JDialog {
     public void setEm(EntityManager em) {
         this.em = em;
     }
+
+    /**
+     * @return the em
+     */
+    public EntityManager getEm() {
+        return em;
+    }
+
+    /**
+     * @return the empresa
+     */
+    public PuntoventaEmpresa getEmpresa() {
+        return empresa;
+    }
+
+    /**
+     * @param empresa the empresa to set
+     */
+    public void setEmpresa(PuntoventaEmpresa empresa) {
+        this.empresa = empresa;
+    }
+
+    /**
+     * @return the usuario
+     */
+    public PuntoventaUsuario getUsuario() {
+        return usuario;
+    }
+
+    /**
+     * @param usuario the usuario to set
+     */
+    public void setUsuario(PuntoventaUsuario usuario) {
+        this.usuario = usuario;
+    }
+
+    
 }

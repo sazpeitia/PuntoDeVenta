@@ -6,6 +6,7 @@
 package puntodeventa.sql;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -19,7 +20,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -42,6 +46,9 @@ import javax.xml.bind.annotation.XmlTransient;
     
 public class PuntoventaProducto implements Serializable {
 
+    @JoinColumn(name = "ID_EMPRESA", referencedColumnName = "ID_EMPRESA")
+    @ManyToOne
+    private PuntoventaEmpresa idEmpresa;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,6 +71,14 @@ public class PuntoventaProducto implements Serializable {
     private PuntoventaCategoria idCategoria;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProducto")
     private List<PuntoventaCarrito> puntoventaCarritoList;
+    
+    @Column(name = "FECHA_CREACION",columnDefinition="DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion;
+    
+    @JoinColumn(name = "ID_COMMON_OBJECT", referencedColumnName = "ID_COMMON_OBJECT")
+    @OneToOne
+    private PuntoventaCommonObject idCommonObject;
 
     public PuntoventaProducto() {
     }
@@ -159,7 +174,49 @@ public class PuntoventaProducto implements Serializable {
 
     @Override
     public String toString() {
-        return "puntodeventa.sql.PuntoventaProducto[ idProducto=" + idProducto + " ]";
+        return this.getNombreProducto();
+    }
+
+    /**
+     * @return the idEmpresa
+     */
+    public PuntoventaEmpresa getIdEmpresa() {
+        return idEmpresa;
+    }
+
+    /**
+     * @param idEmpresa the idEmpresa to set
+     */
+    public void setIdEmpresa(PuntoventaEmpresa idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
+
+    /**
+     * @return the fechaCreacion
+     */
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    /**
+     * @param fechaCreacion the fechaCreacion to set
+     */
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    /**
+     * @return the idCommonObject
+     */
+    public PuntoventaCommonObject getIdCommonObject() {
+        return idCommonObject;
+    }
+
+    /**
+     * @param idCommonObject the idCommonObject to set
+     */
+    public void setIdCommonObject(PuntoventaCommonObject idCommonObject) {
+        this.idCommonObject = idCommonObject;
     }
     
 }

@@ -11,31 +11,26 @@ import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
-import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import puntodeventa.PuntoVentaConfiguracion;
 import puntodeventa.PuntoVentaPrinter;
 import puntodeventa.sql.PuntoventaCarrito;
+import puntodeventa.sql.PuntoventaEmpresa;
 import puntodeventa.sql.PuntoventaProducto;
+import puntodeventa.sql.PuntoventaUsuario;
 import puntodeventa.sql.PuntoventaVenta;
 
 /**
@@ -209,8 +204,6 @@ public class JFrameVenta extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 
-        em.close();
-        emf.close();
     }//GEN-LAST:event_formWindowClosing
 
     private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
@@ -241,7 +234,8 @@ public class JFrameVenta extends javax.swing.JFrame {
         JDialogNuevoArticuloCarrito articuloCarrito = new JDialogNuevoArticuloCarrito(this, true);
         articuloCarrito.setModoEdicion(false);
         articuloCarrito.setLocationRelativeTo(this);
-        articuloCarrito.setEm(em);
+        articuloCarrito.setEm(getEm());
+        articuloCarrito.setEmpresa(getEmpresa());
         articuloCarrito.setVisible(true);
         articuloCarrito.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
@@ -266,10 +260,10 @@ public class JFrameVenta extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un producto para modificar.");
         } else {
 
-            JDialogNuevoArticuloCarrito articuloCarrito = new JDialogNuevoArticuloCarrito(this, true);
+            JDialogNuevoArticuloCarrito articuloCarrito = new JDialogNuevoArticuloCarrito(null, true);
             articuloCarrito.setModoEdicion(true);
             articuloCarrito.setLocationRelativeTo(this);
-            articuloCarrito.setEm(em);
+            articuloCarrito.setEm(getEm());
 
             articuloCarrito.setModoEdicion(true);
             articuloCarrito.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
@@ -323,7 +317,7 @@ public class JFrameVenta extends javax.swing.JFrame {
                 totalCompra += (Double) carritoJTable.getValueAt(index, 4);
             }
 
-            JDialogVentaResumen ventaResumen = new JDialogVentaResumen(this, true);
+            JDialogVentaResumen ventaResumen = new JDialogVentaResumen(null, true);
 
             ventaResumen.setLocationRelativeTo(this);
             ventaResumen.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
@@ -367,8 +361,14 @@ public class JFrameVenta extends javax.swing.JFrame {
         String cambio = String.format("$%.2f", venta.getCambioVenta());
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         String dateTime = formato.format(venta.getFechaVenta());
+        String user = String.format( "%s %s",
+                getUsuario().getIdAuthUser().getFirstName(), 
+                getUsuario().getIdAuthUser().getLastName()
+        );
+        String nombreEmpresa = getEmpresa().getNombreEmpresa();
+        String direccionEmpresa = getEmpresa().getDireccion();
         
-        impresion.setValuesTicket(dateTime, items, total, pago, cambio);
+        impresion.setValuesTicket(dateTime, items, total, pago, cambio,nombreEmpresa, direccionEmpresa, user );
         
         try {
             impresion.printTicket();
@@ -406,6 +406,7 @@ public class JFrameVenta extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new JFrameVenta().setVisible(true);
             }
@@ -425,16 +426,18 @@ public class JFrameVenta extends javax.swing.JFrame {
 
     private PuntoventaVenta nuevaVenta(Date fechaVenta, double totalVenta, double pagoVenta, double cambioVenta) {
 
-        em.getTransaction().begin();
+        getEm().getTransaction().begin();
 
         PuntoventaVenta venta = new PuntoventaVenta();
         venta.setFechaVenta(fechaVenta);
         venta.setTotalVenta(totalVenta);
         venta.setPagoVenta(pagoVenta);
         venta.setCambioVenta(cambioVenta);
+        venta.setIdEmpresa(getEmpresa());
+        venta.setIdUsuarioVenta(getUsuario());
 
-        em.persist(venta);
-        em.getTransaction().commit();
+        getEm().persist(venta);
+        getEm().getTransaction().commit();
 
         return venta;
     }
@@ -443,7 +446,7 @@ public class JFrameVenta extends javax.swing.JFrame {
         
         String ventaString = "";
 
-        em.getTransaction().begin();
+        getEm().getTransaction().begin();
 
         PuntoventaCarrito carrito = new PuntoventaCarrito();
 
@@ -453,10 +456,10 @@ public class JFrameVenta extends javax.swing.JFrame {
         carrito.setTotal(cantidadComprada * producto.getPrecioVenta());
         producto.setCantidadDisponible(producto.getCantidadDisponible() - cantidadComprada);
         
-        ventaString = String.format("%-35s%5.2f$%10.2f\n", producto.getNombreProducto(), cantidadComprada, carrito.getTotal());
+        ventaString = String.format("%s\n%20.2f %10.2f\n", producto.getNombreProducto(), cantidadComprada, carrito.getTotal());
 
-        em.persist(carrito);
-        em.getTransaction().commit();
+        getEm().persist(carrito);
+        getEm().getTransaction().commit();
         
         return ventaString;
     }
@@ -534,8 +537,6 @@ public class JFrameVenta extends javax.swing.JFrame {
 
     private void customInit() {
 
-        emf = Persistence.createEntityManagerFactory("PuntoDeVentaPU");
-        em = emf.createEntityManager();
         codigoBarrasCache = "";
         listaArticulos = new ArrayList<>();
         dateInit();
@@ -575,7 +576,7 @@ public class JFrameVenta extends javax.swing.JFrame {
         try {
 
             TypedQuery<PuntoventaProducto> typedQuery;
-            typedQuery = em.createNamedQuery(
+            typedQuery = getEm().createNamedQuery(
                     "PuntoventaProducto.findByIdCodigoBarra", PuntoventaProducto.class);
             typedQuery.setParameter("idCodigoBarra", codigoBarras);
             producto = typedQuery.getSingleResult();
@@ -589,11 +590,12 @@ public class JFrameVenta extends javax.swing.JFrame {
     }
 
     // Custom variables
-    private EntityManagerFactory emf;
     private EntityManager em;
     private String codigoBarrasCache;
     private List<PuntoventaProducto> listaArticulos;
     private PuntoventaVenta ventaNueva;
+    private PuntoventaEmpresa empresa;
+    private PuntoventaUsuario usuario;
     private Date fechaUltimoEventoTeclado;
 
 
@@ -607,4 +609,46 @@ public class JFrameVenta extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton nuevoProductoJButton;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the empresa
+     */
+    public PuntoventaEmpresa getEmpresa() {
+        return empresa;
+    }
+
+    /**
+     * @param empresa the empresa to set
+     */
+    public void setEmpresa(PuntoventaEmpresa empresa) {
+        this.empresa = empresa;
+    }
+
+    /**
+     * @return the usuario
+     */
+    public PuntoventaUsuario getUsuario() {
+        return usuario;
+    }
+
+    /**
+     * @param usuario the usuario to set
+     */
+    public void setUsuario(PuntoventaUsuario usuario) {
+        this.usuario = usuario;
+    }
+
+    /**
+     * @return the em
+     */
+    public EntityManager getEm() {
+        return em;
+    }
+
+    /**
+     * @param em the em to set
+     */
+    public void setEm(EntityManager em) {
+        this.em = em;
+    }
 }

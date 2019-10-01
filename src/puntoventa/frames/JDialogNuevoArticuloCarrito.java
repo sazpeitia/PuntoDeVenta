@@ -10,7 +10,7 @@ import javax.persistence.EntityManager;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.WindowConstants;
+import puntodeventa.sql.PuntoventaEmpresa;
 import puntodeventa.sql.PuntoventaProducto;
 
 /**
@@ -21,6 +21,8 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
 
     /**
      * Creates new form JDialogNuevoArticuloCarrito
+     * @param parent
+     * @param modal
      */
     public JDialogNuevoArticuloCarrito(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -184,6 +186,7 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
         JDialogBuscarProducto buscarProducto = new JDialogBuscarProducto((JFrame)this.getParent(), true);
         buscarProducto.setLocationRelativeTo(this);
         buscarProducto.setEm(em);
+        buscarProducto.setEmpresa(getEmpresa());
         buscarProducto.setVisible(true);
         buscarProducto.setDefaultCloseOperation( JDialog.HIDE_ON_CLOSE );
         
@@ -265,6 +268,7 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 JDialogNuevoArticuloCarrito dialog = new JDialogNuevoArticuloCarrito(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -294,6 +298,7 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
     
     // Custom variables
     private PuntoventaProducto producto;
+    private PuntoventaEmpresa empresa;
     private boolean modoEdicion;
     private boolean cancelado;
     private Double cantidad;
@@ -376,5 +381,19 @@ public class JDialogNuevoArticuloCarrito extends javax.swing.JDialog {
         
         cantidadJSpinner.setValue( cantidad );
         totalJTextField.setText( String.format("%f",cantidad * producto.getPrecioVenta() ) );
+    }
+
+    /**
+     * @return the empresa
+     */
+    public PuntoventaEmpresa getEmpresa() {
+        return empresa;
+    }
+
+    /**
+     * @param empresa the empresa to set
+     */
+    public void setEmpresa(PuntoventaEmpresa empresa) {
+        this.empresa = empresa;
     }
 }

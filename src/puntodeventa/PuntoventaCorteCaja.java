@@ -14,6 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -22,6 +24,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import puntodeventa.sql.PuntoventaEmpresa;
+import puntodeventa.sql.PuntoventaUsuario;
 import puntodeventa.sql.PuntoventaVenta;
 
 /**
@@ -38,6 +42,20 @@ import puntodeventa.sql.PuntoventaVenta;
     @NamedQuery(name = "PuntoventaCorteCaja.findByFechaCorte", query = "SELECT p FROM PuntoventaCorteCaja p WHERE p.fechaCorte = :fechaCorte")})
 public class PuntoventaCorteCaja implements Serializable {
 
+    @JoinColumn(name = "ID_USUARIO_CORTE", referencedColumnName = "ID_USUARIO")
+    @ManyToOne
+    private PuntoventaUsuario idUsuarioCorte;
+    
+    @JoinColumn(name = "ID_EMPRESA", referencedColumnName = "ID_EMPRESA")
+    @ManyToOne
+    private PuntoventaEmpresa idEmpresa;
+
+    @Basic(optional = false)
+    @Column(name = "TOTAL_REAL")
+    private double totalReal;
+    @Column(name = "RETIRO_CAJA")
+    private double retiroCaja;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,8 +66,8 @@ public class PuntoventaCorteCaja implements Serializable {
     @Column(name = "TOTAL_RECAUDADO")
     private double totalRecaudado;
     @Basic(optional = false)
-    @Column(name = "FECHA_CORTE")
-    @Temporal(TemporalType.DATE)
+    @Column(name = "FECHA_CORTE",columnDefinition="DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCorte;
     @OneToMany(mappedBy = "idCorteCaja")
     private Collection<PuntoventaVenta> puntoventaVentaCollection;
@@ -123,6 +141,56 @@ public class PuntoventaCorteCaja implements Serializable {
     @Override
     public String toString() {
         return "puntodeventa.PuntoventaCorteCaja[ idCorteCaja=" + idCorteCaja + " ]";
+    }
+
+    public double getTotalReal() {
+        return totalReal;
+    }
+
+    public void setTotalReal(double totalReal) {
+        this.totalReal = totalReal;
+    }
+
+    /**
+     * @return the retiroCaja
+     */
+    public double getRetiroCaja() {
+        return retiroCaja;
+    }
+
+    /**
+     * @param retiroCaja the retiroCaja to set
+     */
+    public void setRetiroCaja(double retiroCaja) {
+        this.retiroCaja = retiroCaja;
+    }
+
+    /**
+     * @return the idEmpresa
+     */
+    public PuntoventaEmpresa getIdEmpresa() {
+        return idEmpresa;
+    }
+
+    /**
+     * @param idEmpresa the idEmpresa to set
+     */
+    public void setIdEmpresa(PuntoventaEmpresa idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
+
+    /**
+     * @return the idUsuarioCorte
+     */
+    public PuntoventaUsuario getIdUsuarioCorte() {
+        return idUsuarioCorte;
+    }
+
+    /**
+     * @param idUsuarioCorte the idUsuarioCorte to set
+     */
+    public void setIdUsuarioCorte(PuntoventaUsuario idUsuarioCorte) {
+        this.idUsuarioCorte = idUsuarioCorte;
     }
     
 }
